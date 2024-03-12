@@ -1,0 +1,48 @@
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    binary: dw
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+nfpms:
+  - file_name_template: "{{ .ConventionalFileName }}"
+    description: CLI to operate timescale instances through CLI
+    maintainer: Leonardo Metzger <leonardo.metzger@outlook.com>
+    license: MIT
+    vendor: leometzger
+    formats:
+      - apk
+      - deb
+      - rpm
+    bindir: /usr/bin
+    section: utils

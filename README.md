@@ -1,4 +1,4 @@
-# Intro
+# Intro / Idea
 
 ```sh
 ts hypertable ls
