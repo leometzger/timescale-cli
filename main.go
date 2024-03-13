@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/leometzger/timescale-cli/internal/cmd/aggregation"
+	"github.com/leometzger/timescale-cli/internal/cmd/hypertable"
 	"github.com/leometzger/timescale-cli/internal/config"
-	"github.com/leometzger/timescale-cli/pkg/cmd/aggregation"
-	"github.com/leometzger/timescale-cli/pkg/cmd/hypertable"
 	"github.com/spf13/cobra"
 )
 

@@ -1,8 +1,8 @@
 package config
 
 type CliOptions struct {
-	ConfigPath string
 	Env        string
+	ConfigPath string
 	Verbose    bool
 }
 
