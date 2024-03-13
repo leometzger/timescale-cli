@@ -1,4 +1,4 @@
-package internal
+package db
 
 type Hypertable struct {
 	HypertableSchema   string
