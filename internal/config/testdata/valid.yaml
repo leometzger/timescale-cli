@@ -1,0 +1,13 @@
+development:
+  host: localhost
+  user: postgres
+  database: datawarehouse
+  password: password
+  port: 5432
+
+staging:
+  host: localhost-s
+  user: postgres-s
+  database: datawarehouse-s
+  password: password-s
+  port: 5434
