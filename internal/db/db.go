@@ -11,11 +11,11 @@ import (
 )
 
 type ConnectionInfo struct {
-	Host     string `env:"PG_HOST" envDefault:"localhost"`
-	Port     int    `env:"PG_PORT" envDefault:"5432"`
-	User     string `env:"PG_USER"`
-	Pass     string `env:"PG_PASS"`
-	Database string `env:"PG_DATABASE" envDefault:"tsdb"`
+	Host     string `env:"PGHOST" envDefault:"localhost"`
+	Port     uint16 `env:"PGPORT" envDefault:"5432"`
+	User     string `env:"PGUSER"`
+	Pass     string `env:"PGPASS"`
+	Database string `env:"PGDATABASE" envDefault:"tsdb"`
 }
 
 func (c *ConnectionInfo) String() string {
@@ -29,7 +29,7 @@ func (c *ConnectionInfo) String() string {
 	)
 }
 
-func NewConnectionInfo(host string, port int, database string, user string, pass string) *ConnectionInfo {
+func NewConnectionInfo(host string, port uint16, database string, user string, pass string) *ConnectionInfo {
 	return &ConnectionInfo{
 		Host:     host,
 		Port:     port,
@@ -54,7 +54,7 @@ func LoadConnectionInfoEnv() *ConnectionInfo {
 func Connect(connectionInfo *ConnectionInfo) *pgx.Conn {
 	conn, err := pgx.Connect(context.Background(), connectionInfo.String())
 	if err != nil {
-		slog.Error("unable to connect to database %v\n", err)
+		slog.Error(err.Error())
 		os.Exit(1)
 	}
 
