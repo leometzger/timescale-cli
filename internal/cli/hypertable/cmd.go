@@ -11,8 +11,8 @@ func NewHypertableCommands(options *config.CliOptions) *cobra.Command {
 		Short: "Hypertable commands",
 	}
 
-	cmd.AddCommand(NewInspectCommand(options))
-	cmd.AddCommand(NewListCommand(options))
+	cmd.AddCommand(newInspectCommand(options))
+	cmd.AddCommand(newListCommand(options))
 
 	return cmd
 }

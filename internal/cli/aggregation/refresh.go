@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewRefreshCommand(options *config.CliOptions) *cobra.Command {
+func newRefreshCommand(options *config.CliOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "refresh",
 		Aliases: []string{},

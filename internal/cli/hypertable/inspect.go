@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewInspectCommand(options *config.CliOptions) *cobra.Command {
+func newInspectCommand(options *config.CliOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "inspect",
 		Aliases: []string{"ins"},

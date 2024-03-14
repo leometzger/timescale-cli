@@ -11,10 +11,10 @@ func NewAggregationCommand(options *config.CliOptions) *cobra.Command {
 		Short: "Aggregation commands",
 	}
 
-	cmd.AddCommand(NewCompressCommand(options))
-	cmd.AddCommand(NewInspectCommand(options))
-	cmd.AddCommand(NewListCommand(options))
-	cmd.AddCommand(NewRefreshCommand(options))
+	cmd.AddCommand(newCompressCommand(options))
+	cmd.AddCommand(newInspectCommand(options))
+	cmd.AddCommand(newListCommand(options))
+	cmd.AddCommand(newRefreshCommand(options))
 
 	return cmd
 }

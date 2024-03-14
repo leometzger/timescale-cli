@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCompressCommand(options *config.CliOptions) *cobra.Command {
+func newCompressCommand(options *config.CliOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "compress",
 		Short: "",

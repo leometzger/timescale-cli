@@ -18,6 +18,8 @@ type HypertableInfo struct {
 	Size               int64
 }
 
+type Chunk struct{}
+
 func (h HypertableInfo) Headers() []string {
 	return []string{
 		"HypertableName",
