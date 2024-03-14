@@ -12,10 +12,10 @@ type Hypertable struct {
 }
 
 type HypertableInfo struct {
-	HypertableName     string
-	NumChunks          int64
-	CompressionEnabled bool
-	Size               int64
+	HypertableName     string `present:"HYPERTABLE"`
+	NumChunks          int64  `present:"CHUNKS"`
+	CompressionEnabled bool   `present:"COMPRESSION ENABLED"`
+	Size               int64  `present:"SIZE"`
 }
 
 type Chunk struct{}

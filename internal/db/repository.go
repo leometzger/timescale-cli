@@ -8,11 +8,11 @@ import (
 )
 
 type TimescaleRepository interface {
-	ShowChunks(hypertableName string, newerThan time.Time, olderThan time.Time) ([]*Chunk, error)
-	GetContinuousAggregations() ([]*ContinuousAggregation, error)
-	GetContinuousAggregationsByHypertable(hypertableName string) ([]*ContinuousAggregation, error)
-	GetContinuousAggregationsByViewName(viewName string) ([]*ContinuousAggregation, error)
-	GetHypertables() ([]*ContinuousAggregation, error)
+	// ShowChunks(hypertableName string, newerThan time.Time, olderThan time.Time) ([]*Chunk, error)
+	GetAggs() ([]ContinuousAggregationInfo, error)
+	//GetAggsByHypertable(hypertableName string) ([]ContinuousAggregationInfo, error)
+	//GetAggsByViewName(viewName string) ([]ContinuousAggregationInfo, error)
+	//GetHypertables() ([]ContinuousAggregationInfo, error)
 }
 
 type TimescaleRepositoryPgx struct {
@@ -25,21 +25,42 @@ func NewTimescaleRepository(conn *pgx.Conn) TimescaleRepository {
 	}
 }
 
-func (r *TimescaleRepositoryPgx) ShowChunks(hypertableName string, newerThan time.Time, olderThan time.Time) ([]*Chunk, error) {
-	_, err := r.conn.Exec(context.Background(), "SELECT show_chunks($1, $2, $3)", hypertableName, newerThan, olderThan)
+func (r *TimescaleRepositoryPgx) ShowChunks(hypertableName string, newerThan time.Time, olderThan time.Time) ([]Chunk, error) {
+	_, err := r.conn.Query(
+		context.Background(),
+		`SELECT show_chunks($1, $2, $3)`,
+		hypertableName,
+		newerThan,
+		olderThan,
+	)
 	return nil, err
 }
 
-func (r *TimescaleRepositoryPgx) GetContinuousAggregations() ([]*ContinuousAggregation, error) {
-	_, err := r.conn.Exec(context.Background(), "SELECT * FROM timescaledb_information.continuous_aggregates")
+func (r *TimescaleRepositoryPgx) GetAggs() ([]ContinuousAggregationInfo, error) {
+	rows, err := r.conn.Query(context.Background(), `
+			SELECT  
+				view_name,
+				materialized_only,
+				compression_enabled,
+				finalized
+			FROM timescaledb_information.continuous_aggregates
+		`,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	aggregations, err := pgx.CollectRows(
+		rows,
+		pgx.RowToStructByName[ContinuousAggregationInfo],
+	)
+	if err != nil {
+		return nil, err
+	}
+	return aggregations, err
 }
 
-func (r *TimescaleRepositoryPgx) GetContinuousAggregationsByHypertable(hypertableName string) ([]*ContinuousAggregation, error) {
+func (r *TimescaleRepositoryPgx) GetAggsByHypertable(hypertableName string) ([]ContinuousAggregationInfo, error) {
 	_, err := r.conn.Exec(
 		context.Background(),
 		"SELECT * FROM timescaledb_information.continuous_aggregates",
@@ -51,7 +72,7 @@ func (r *TimescaleRepositoryPgx) GetContinuousAggregationsByHypertable(hypertabl
 	return nil, nil
 }
 
-func (r *TimescaleRepositoryPgx) GetContinuousAggregationsByViewName(viewName string) ([]*ContinuousAggregation, error) {
+func (r *TimescaleRepositoryPgx) GetAggsByViewName(viewName string) ([]ContinuousAggregationInfo, error) {
 	_, err := r.conn.Exec(
 		context.Background(),
 		"SELECT * FROM timescaledb_information.continuous_aggregates WHERE view_name like '%$1%'",
@@ -64,7 +85,7 @@ func (r *TimescaleRepositoryPgx) GetContinuousAggregationsByViewName(viewName st
 	return nil, nil
 }
 
-func (r *TimescaleRepositoryPgx) GetHypertables() ([]*ContinuousAggregation, error) {
+func (r *TimescaleRepositoryPgx) GetHypertables() ([]ContinuousAggregation, error) {
 	_, err := r.conn.Exec(
 		context.Background(),
 		"SELECT * FROM timescaledb_information.hypertables",
