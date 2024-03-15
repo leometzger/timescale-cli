@@ -1,7 +1,7 @@
 package db
 
-import "strconv"
-
+// complete representation of hypertable from
+// timescaledb_information.hypertables
 type Hypertable struct {
 	HypertableSchema   string
 	HYpertableName     string
@@ -11,33 +11,20 @@ type Hypertable struct {
 	CompressionEnabled bool
 }
 
+// representation of a hypertable
+
+// with just the important fields
 type HypertableInfo struct {
-	HypertableName     string `present:"HYPERTABLE"`
-	NumChunks          int64  `present:"CHUNKS"`
-	CompressionEnabled bool   `present:"COMPRESSION ENABLED"`
-	Size               int64  `present:"SIZE"`
+	HypertableName     string `header:"HYPERTABLE"`
+	NumChunks          int64  `header:"CHUNKS"`
+	CompressionEnabled bool   `header:"COMPRESSION ENABLED"`
+	Size               int64  `header:"SIZE"`
 }
 
 type Chunk struct{}
 
-func (h HypertableInfo) Headers() []string {
-	return []string{
-		"HypertableName",
-		"NumChunks",
-		"CompressionEnabled",
-		"Size",
-	}
-}
-
-func (h HypertableInfo) Values() []string {
-	return []string{
-		h.HypertableName,
-		strconv.FormatInt(h.NumChunks, 10),
-		strconv.FormatBool(h.CompressionEnabled),
-		strconv.FormatInt(h.Size, 10),
-	}
-}
-
+// complete representation of continuous_aggregation from
+// timescaledb_information.continuous_aggregates
 type ContinuousAggregation struct {
 	HypertableSchema                string
 	HypertableName                  string
@@ -52,27 +39,11 @@ type ContinuousAggregation struct {
 	Finalized                       bool
 }
 
+// representation of a continuous_aggregation
+// with just the important fields
 type ContinuousAggregationInfo struct {
-	ViewName           string
-	MaterializedOnly   bool
-	CompressionEnabled bool
-	Finalized          bool
-}
-
-func (c *ContinuousAggregationInfo) Headers() []string {
-	return []string{
-		"ViewName",
-		"MaterializedOnly",
-		"CompressionEnabled",
-		"Finalized",
-	}
-}
-
-func (c *ContinuousAggregationInfo) Values() []string {
-	return []string{
-		c.ViewName,
-		strconv.FormatBool(c.MaterializedOnly),
-		strconv.FormatBool(c.CompressionEnabled),
-		strconv.FormatBool(c.Finalized),
-	}
+	ViewName           string `header:"VIEW_NAME"`
+	MaterializedOnly   bool   `header:"MATERIALIZED_ONLY"`
+	CompressionEnabled bool   `header:"COMPRESSION_ENABLED"`
+	Finalized          bool   `header:"FINALIZED"`
 }

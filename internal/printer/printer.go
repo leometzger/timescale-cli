@@ -1,7 +1,10 @@
 package printer
 
 import (
+	"log/slog"
 	"os"
+	"reflect"
+	"strconv"
 	"text/tabwriter"
 )
 
@@ -24,21 +27,46 @@ func NewTabwriterPrinter() *TabWriterPrinter {
 	}
 }
 
-func (p *TabWriterPrinter) Print(ref Printable, values []Printable) error {
-	headers := ref.Headers()
-	for _, header := range headers {
+func (p *TabWriterPrinter) Print(ref any, values []any) error {
+	// @TODO add error handling
+	// @TODO refactor a little bit
+	r := reflect.TypeOf(ref)
+	for i := 0; i < r.NumField(); i++ {
+		var header string
+
+		field := r.Field(i)
+		header, ok := field.Tag.Lookup("header")
+		if !ok {
+			header = field.Name
+		}
+
 		p.writer.Write([]byte(header))
 		p.writer.Write([]byte("\t"))
 	}
+
 	p.writer.Write([]byte("\n"))
 
 	for _, value := range values {
-		for _, v := range value.Values() {
-			p.writer.Write([]byte(v))
+		r := reflect.TypeOf(value)
+
+		for i := 0; i < r.NumField(); i++ {
+			k := r.Field(i).Type
+			v := reflect.ValueOf(value).Field(i)
+
+			switch k.Kind() {
+			case reflect.String:
+				p.writer.Write([]byte(v.String()))
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				p.writer.Write([]byte(v.String()))
+			case reflect.Bool:
+				p.writer.Write([]byte(strconv.FormatBool(v.Bool())))
+			default:
+				slog.Error("invalid kind", k.Kind())
+			}
 			p.writer.Write([]byte("\t"))
 		}
-		p.writer.Write([]byte("\n"))
 	}
+	p.writer.Write([]byte("\n"))
 	p.writer.Flush()
 	return nil
 }

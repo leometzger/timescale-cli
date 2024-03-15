@@ -17,15 +17,15 @@ func newListCommand(options *config.CliOptions) *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			p := printer.NewTabwriterPrinter()
 
-			var arr []printer.Printable
-			value := &db.ContinuousAggregationInfo{
+			var arr []any
+			value := db.ContinuousAggregationInfo{
 				ViewName:           "test",
 				MaterializedOnly:   true,
 				CompressionEnabled: true,
 				Finalized:          true,
 			}
 			arr = append(arr, value)
-			p.Print(&db.ContinuousAggregationInfo{}, arr)
+			p.Print(db.ContinuousAggregationInfo{}, arr)
 		},
 	}
 
