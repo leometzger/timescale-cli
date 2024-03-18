@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/leometzger/timescale-cli/internal/cli"
+	cli "github.com/leometzger/timescale-cli/internal"
 	"github.com/leometzger/timescale-cli/internal/config"
 )
 
