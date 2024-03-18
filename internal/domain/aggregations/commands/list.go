@@ -1,4 +1,4 @@
-package aggregation
+package commands
 
 import (
 	"github.com/leometzger/timescale-cli/internal/config"

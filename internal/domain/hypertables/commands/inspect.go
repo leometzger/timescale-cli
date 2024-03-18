@@ -1,4 +1,4 @@
-package hypertable
+package commands
 
 import (
 	"fmt"

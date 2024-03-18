@@ -1,9 +1,9 @@
-package cli
+package internal
 
 import (
-	"github.com/leometzger/timescale-cli/internal/cli/aggregation"
-	"github.com/leometzger/timescale-cli/internal/cli/hypertable"
+	aggregation "github.com/leometzger/timescale-cli/internal/aggregations/commands"
 	"github.com/leometzger/timescale-cli/internal/config"
+	hypertable "github.com/leometzger/timescale-cli/internal/hypertables/commands"
 	"github.com/spf13/cobra"
 )
 

@@ -1,4 +1,4 @@
-package hypertable
+package commands
 
 import (
 	"fmt"
@@ -7,10 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newListCommand(options *config.CliOptions) *cobra.Command {
+func newRefreshCommand(options *config.CliOptions) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "list",
-		Aliases: []string{"ls"},
+		Use:     "refresh",
+		Aliases: []string{},
 		Short:   "",
 		Long:    "",
 		Args:    cobra.ExactArgs(0),

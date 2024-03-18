@@ -1,4 +1,4 @@
-package aggregation
+package commands
 
 import (
 	"fmt"
@@ -7,10 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newRefreshCommand(options *config.CliOptions) *cobra.Command {
+func newListCommand(options *config.CliOptions) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "refresh",
-		Aliases: []string{},
+		Use:     "list",
+		Aliases: []string{"ls"},
 		Short:   "",
 		Long:    "",
 		Args:    cobra.ExactArgs(0),
