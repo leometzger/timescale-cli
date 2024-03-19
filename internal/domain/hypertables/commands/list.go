@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"log/slog"
 	"os"
 
@@ -20,8 +21,11 @@ func newListCommand(options *config.CliOptions) *cobra.Command {
 		Args:    cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := slog.Default()
+
 			connectionInfo := db.NewConnectionInfo("localhost", 5432, "postgres", "postgres", "password")
 			conn := db.Connect(connectionInfo)
+			defer conn.Close(context.Background())
+
 			printer := printer.NewTabwriterPrinter()
 			repository := hypertables.NewHypertablesRepository(conn, logger)
 

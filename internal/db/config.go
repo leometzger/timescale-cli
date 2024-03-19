@@ -5,7 +5,9 @@ import (
 	"log/slog"
 	"os"
 
+	"dario.cat/mergo"
 	"github.com/caarlos0/env"
+	"github.com/leometzger/timescale-cli/internal/config"
 )
 
 type ConnectionInfo struct {
@@ -37,7 +39,7 @@ func NewConnectionInfo(host string, port uint16, database string, user string, p
 	}
 }
 
-func LoadConnectionInfoEnv() *ConnectionInfo {
+func loadConnectionInfoEnv() *ConnectionInfo {
 	connectionInfo := &ConnectionInfo{}
 
 	if err := env.Parse(connectionInfo); err != nil {
@@ -45,5 +47,11 @@ func LoadConnectionInfoEnv() *ConnectionInfo {
 		os.Exit(1)
 	}
 
+	return connectionInfo
+}
+
+func LoadConnectionInfoWithConfigFile(configFile config.ConfigFile) *ConnectionInfo {
+	connectionInfo := loadConnectionInfoEnv()
+	mergo.Merge(&connectionInfo, configFile)
 	return connectionInfo
 }
