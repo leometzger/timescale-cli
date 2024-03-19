@@ -57,7 +57,7 @@ func (p *TabWriterPrinter) Print(ref any, values []any) error {
 			case reflect.String:
 				p.writer.Write([]byte(v.String()))
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-				p.writer.Write([]byte(v.String()))
+				p.writer.Write([]byte(strconv.FormatInt(v.Int(), 10)))
 			case reflect.Bool:
 				p.writer.Write([]byte(strconv.FormatBool(v.Bool())))
 			default:

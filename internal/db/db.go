@@ -16,6 +16,6 @@ func Connect(connectionInfo *ConnectionInfo) *pgx.Conn {
 		os.Exit(1)
 	}
 
-	slog.Info("connected to database sucessfully")
+	slog.Debug("connected to database sucessfully")
 	return conn
 }

@@ -7,8 +7,9 @@ import (
 
 func NewHypertableCommands(options *config.CliOptions) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "hypertable",
-		Short: "Hypertable commands",
+		Use:     "hypertable",
+		Aliases: []string{"h"},
+		Short:   "Hypertable commands",
 	}
 
 	cmd.AddCommand(newInspectCommand(options))
