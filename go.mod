@@ -3,7 +3,6 @@ module github.com/leometzger/timescale-cli
 go 1.22
 
 require (
-	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.9.0
@@ -11,7 +10,7 @@ require (
 )
 
 require (
-	dario.cat/mergo v1.0.0
+	github.com/caarlos0/env/v10 v10.0.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

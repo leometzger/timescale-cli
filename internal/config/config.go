@@ -14,7 +14,7 @@ const DefaultConfigFileName = ".ts-config.yaml"
 type ConfigFile struct {
 	Host     string
 	Database string
-	Port     int
+	Port     uint16
 	User     string
 	Password string
 }
