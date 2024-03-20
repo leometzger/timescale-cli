@@ -13,13 +13,9 @@ func SetupDB() *pgx.Conn {
 	info := db.NewConnectionInfo("localhost", 5432, "postgres", "postgres", "password")
 	conn := db.Connect(info)
 
-	_, err := conn.Exec(context.Background(), `DROP TABLE IF EXISTS metrics;`)
-	if err != nil {
-		slog.Error("error dropping table: " + err.Error())
-		os.Exit(1)
-	}
+	dropAllObjects(conn)
 
-	_, err = conn.Exec(context.Background(), `
+	_, err := conn.Exec(context.Background(), `
 		CREATE TABLE metrics(
 				created timestamp with time zone default now() not null,
 				type_id integer                                not null,
@@ -44,7 +40,52 @@ func SetupDB() *pgx.Conn {
 	}
 
 	insertMetrics(conn)
+	createContinuousAggregations(conn)
 	return conn
+}
+
+func dropAllObjects(conn *pgx.Conn) {
+	_, err := conn.Exec(context.Background(), `
+		DROP TABLE IF EXISTS metrics CASCADE;
+	`)
+	if err != nil {
+		slog.Error("error dropping objects: " + err.Error())
+		os.Exit(1)
+	}
+}
+
+func createContinuousAggregations(conn *pgx.Conn) {
+	_, err := conn.Exec(context.Background(), `
+		CREATE MATERIALIZED VIEW metrics_by_day WITH (timescaledb.continuous) AS
+		SELECT 
+			time_bucket(interval '1 day', created) AS bucket,
+			type_id,
+			count(*),
+			sum(value)
+		FROM metrics
+		GROUP BY bucket, type_id;
+	`)
+
+	if err != nil {
+		slog.Error("error creating continuous aggregates for testing porpose", "cause", err)
+		os.Exit(1)
+	}
+
+	_, err = conn.Exec(context.Background(), `
+		CREATE MATERIALIZED VIEW metrics_by_hour WITH (timescaledb.continuous) AS
+		SELECT 
+			time_bucket(interval '1 hour', created) AS bucket,
+			type_id,
+			count(*),
+			sum(value)
+		FROM metrics
+		GROUP BY bucket, type_id;
+	`)
+
+	if err != nil {
+		slog.Error("error creating continuous aggregates for testing porpose", "cause", err)
+		os.Exit(1)
+	}
 }
 
 // inserts some energy metrics into timescale

@@ -17,7 +17,9 @@ type AggregationsRepositoryPg struct {
 }
 
 func NewAggregationsRepositoryPg(conn *pgx.Conn) AggregationsRepository {
-	return &AggregationsRepositoryPg{conn: conn}
+	return &AggregationsRepositoryPg{
+		conn: conn,
+	}
 }
 
 func (r *AggregationsRepositoryPg) GetAggs() ([]ContinuousAggregationInfo, error) {
