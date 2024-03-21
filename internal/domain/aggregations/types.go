@@ -19,6 +19,7 @@ type ContinuousAggregation struct {
 // representation of a continuous_aggregation
 // with just the important fields
 type ContinuousAggregationInfo struct {
+	HypertableName     string `header:"HYPERTABLE_NAME"`
 	ViewName           string `header:"VIEW_NAME"`
 	MaterializedOnly   bool   `header:"MATERIALIZED_ONLY"`
 	CompressionEnabled bool   `header:"COMPRESSION_ENABLED"`

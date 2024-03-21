@@ -2,6 +2,8 @@ package aggregations
 
 import (
 	"context"
+	"errors"
+	"log/slog"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -13,18 +15,21 @@ type AggregationsRepository interface {
 }
 
 type AggregationsRepositoryPg struct {
-	conn *pgx.Conn
+	conn   *pgx.Conn
+	logger *slog.Logger
 }
 
-func NewAggregationsRepositoryPg(conn *pgx.Conn) AggregationsRepository {
+func NewAggregationsRepository(conn *pgx.Conn, logger *slog.Logger) AggregationsRepository {
 	return &AggregationsRepositoryPg{
-		conn: conn,
+		conn:   conn,
+		logger: logger,
 	}
 }
 
 func (r *AggregationsRepositoryPg) GetAggs() ([]ContinuousAggregationInfo, error) {
 	rows, err := r.conn.Query(context.Background(), `
 			SELECT  
+				hypertable_name,
 				view_name,
 				materialized_only,
 				compression_enabled,
@@ -33,40 +38,66 @@ func (r *AggregationsRepositoryPg) GetAggs() ([]ContinuousAggregationInfo, error
 		`,
 	)
 	if err != nil {
+		r.logger.Error("error querying continuous aggregates", "cause", err)
 		return nil, err
 	}
 
-	aggregations, err := pgx.CollectRows(
-		rows,
-		pgx.RowToStructByName[ContinuousAggregationInfo],
-	)
-	if err != nil {
-		return nil, err
-	}
-	return aggregations, err
+	return r.parseRows(rows)
 }
 
 func (r *AggregationsRepositoryPg) GetAggsByHypertable(hypertableName string) ([]ContinuousAggregationInfo, error) {
-	_, err := r.conn.Exec(
-		context.Background(),
-		"SELECT * FROM timescaledb_information.continuous_aggregates",
+	rows, err := r.conn.Query(context.Background(), `
+		SELECT 
+			hypertable_name,
+			view_name,
+			materialized_only,
+			compression_enabled,
+			finalized
+		FROM timescaledb_information.continuous_aggregates
+		WHERE hypertable_name = $1`,
 		hypertableName,
 	)
 	if err != nil {
+		r.logger.Error("error querying continuous aggregates", "cause", err)
 		return nil, err
 	}
-	return nil, nil
+
+	aggregations, err := r.parseRows(rows)
+	if len(aggregations) == 0 {
+		return nil, errors.New("hypertable not found")
+	}
+
+	return aggregations, err
 }
 
 func (r *AggregationsRepositoryPg) GetAggsByViewName(viewName string) ([]ContinuousAggregationInfo, error) {
-	_, err := r.conn.Exec(
-		context.Background(),
-		"SELECT * FROM timescaledb_information.continuous_aggregates WHERE view_name like '%$1%'",
+	rows, err := r.conn.Query(context.Background(), `
+			SELECT 
+				hypertable_name,
+				view_name,
+				materialized_only,
+				compression_enabled,
+				finalized
+			FROM timescaledb_information.continuous_aggregates 
+			WHERE view_name LIKE $1`,
 		viewName,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return r.parseRows(rows)
+}
+
+func (r *AggregationsRepositoryPg) parseRows(rows pgx.Rows) ([]ContinuousAggregationInfo, error) {
+	aggregations, err := pgx.CollectRows(
+		rows,
+		pgx.RowToStructByName[ContinuousAggregationInfo],
+	)
+	if err != nil {
+		r.logger.Error("error parsing aggregations query", "cause", err)
+		return nil, err
+	}
+
+	return aggregations, err
 }

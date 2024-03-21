@@ -43,7 +43,7 @@ func (r *HypertablesRepositoryPg) GetHypertables() ([]HypertableInfo, error) {
 		pgx.RowToStructByName[HypertableInfo],
 	)
 	if err != nil {
-		r.logger.Error("error parsing hypertables query", err)
+		r.logger.Error("error parsing hypertables query", "cause", err)
 		return nil, err
 	}
 	return hypertables, err
