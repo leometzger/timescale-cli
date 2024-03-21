@@ -38,15 +38,7 @@ func (r *HypertablesRepositoryPg) GetHypertables() ([]HypertableInfo, error) {
 		return nil, err
 	}
 
-	hypertables, err := pgx.CollectRows(
-		rows,
-		pgx.RowToStructByName[HypertableInfo],
-	)
-	if err != nil {
-		r.logger.Error("error parsing hypertables query", "cause", err)
-		return nil, err
-	}
-	return hypertables, err
+	return r.parseRows(rows)
 }
 
 func (r *HypertablesRepositoryPg) ShowChunks(hypertableName string, newerThan time.Time, olderThan time.Time) ([]Chunk, error) {
@@ -58,4 +50,28 @@ func (r *HypertablesRepositoryPg) ShowChunks(hypertableName string, newerThan ti
 		olderThan,
 	)
 	return nil, err
+}
+
+func (r *HypertablesRepositoryPg) parseRows(rows pgx.Rows) ([]HypertableInfo, error) {
+	hypertables, err := pgx.CollectRows(
+		rows,
+		pgx.RowToStructByName[HypertableInfo],
+	)
+	if err != nil {
+		r.logger.Error("error parsing hypertables", "cause", err)
+		return nil, err
+	}
+	return hypertables, nil
+}
+
+func (r *HypertablesRepositoryPg) parseRowsChunk(rows pgx.Rows) ([]ChunkInfo, error) {
+	chunks, err := pgx.CollectRows(
+		rows,
+		pgx.RowToStructByName[ChunkInfo],
+	)
+	if err != nil {
+		r.logger.Error("error parsing chunks", "cause", err)
+		return nil, err
+	}
+	return chunks, nil
 }

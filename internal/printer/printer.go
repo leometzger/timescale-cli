@@ -65,8 +65,8 @@ func (p *TabWriterPrinter) Print(ref any, values []any) error {
 			}
 			p.writer.Write([]byte("\t"))
 		}
+		p.writer.Write([]byte("\n"))
 	}
-	p.writer.Write([]byte("\n"))
 	p.writer.Flush()
 	return nil
 }

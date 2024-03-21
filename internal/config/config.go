@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"path"
 
@@ -36,7 +37,8 @@ func NewCliOptions(configPath string, verbose bool, env string) *CliOptions {
 func LoadConfig(path string, env string) (*ConfigFile, error) {
 	fileData, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("error while reading the config file: %s", err)
+		slog.Info("could not open config file, using default configuration")
+		return DefaultConfig(), nil
 	}
 
 	conf := make(map[string]*ConfigFile)
