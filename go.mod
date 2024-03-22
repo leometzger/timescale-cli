@@ -9,6 +9,8 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
+require github.com/stretchr/objx v0.5.2 // indirect
+
 require (
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/davecgh/go-spew v1.1.1 // indirect

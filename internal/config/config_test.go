@@ -13,7 +13,7 @@ func TestLoadDevelopmentConfigCorrectly(t *testing.T) {
 	config, err := LoadConfig(path.Join("testdata", "valid.yaml"), "development")
 
 	assert.Nil(t, err)
-	assert.Equal(t, 5432, config.Port)
+	assert.Equal(t, uint16(5432), config.Port)
 	assert.Equal(t, "localhost", config.Host)
 	assert.Equal(t, "datawarehouse", config.Database)
 	assert.Equal(t, "postgres", config.User)
@@ -24,7 +24,7 @@ func TestLoadStagingConfigCorrectly(t *testing.T) {
 	config, err := LoadConfig(path.Join("testdata", "valid.yaml"), "staging")
 
 	assert.Nil(t, err)
-	assert.Equal(t, 5434, config.Port)
+	assert.Equal(t, uint16(5434), config.Port)
 	assert.Equal(t, "localhost-s", config.Host)
 	assert.Equal(t, "datawarehouse-s", config.Database)
 	assert.Equal(t, "postgres-s", config.User)

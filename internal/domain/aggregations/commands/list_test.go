@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestListAggregationsSuccessfully(t *testing.T) {
-	assert.True(t, true)
+func TestListAggregationsWithoutFilter(t *testing.T) {
+
 }
 
 func TestListAggregationsWithFilter(t *testing.T) {

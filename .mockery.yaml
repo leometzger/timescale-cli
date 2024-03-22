@@ -1,0 +1,9 @@
+with-expecter: true
+all: true
+packages:
+  github.com/leometzger/timescale-cli/internal/domain/aggregations:
+    config:
+      dir: internal/domain/aggregations/mocks
+  github.com/leometzger/timescale-cli/internal/domain/hypertables:
+    config:
+      dir: internal/domain/hypertables/mocks
