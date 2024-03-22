@@ -40,9 +40,8 @@ func TestGetAggsByHypertableInexistentHypertable(t *testing.T) {
 
 	aggs, err := repo.GetAggsByHypertable("inexistent_hypertable")
 
-	assert.Nil(t, aggs)
-	assert.NotNil(t, err)
-	assert.Equal(t, err.Error(), "hypertable not found")
+	assert.Nil(t, err)
+	assert.Equal(t, 0, len(aggs))
 }
 
 func TestShouldGetAggregationsByViewNameUsingLikeExpressions(t *testing.T) {

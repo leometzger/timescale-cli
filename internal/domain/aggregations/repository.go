@@ -2,7 +2,6 @@ package aggregations
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 
 	"github.com/jackc/pgx/v5"
@@ -12,6 +11,7 @@ type AggregationsRepository interface {
 	GetAggs() ([]ContinuousAggregationInfo, error)
 	GetAggsByHypertable(hypertableName string) ([]ContinuousAggregationInfo, error)
 	GetAggsByViewName(viewName string) ([]ContinuousAggregationInfo, error)
+	GetAggsByHypertableAndViewName(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error)
 }
 
 type AggregationsRepositoryPg struct {
@@ -62,12 +62,7 @@ func (r *AggregationsRepositoryPg) GetAggsByHypertable(hypertableName string) ([
 		return nil, err
 	}
 
-	aggregations, err := r.parseRows(rows)
-	if len(aggregations) == 0 {
-		return nil, errors.New("hypertable not found")
-	}
-
-	return aggregations, err
+	return r.parseRows(rows)
 }
 
 func (r *AggregationsRepositoryPg) GetAggsByViewName(viewName string) ([]ContinuousAggregationInfo, error) {
@@ -80,6 +75,26 @@ func (r *AggregationsRepositoryPg) GetAggsByViewName(viewName string) ([]Continu
 				finalized
 			FROM timescaledb_information.continuous_aggregates 
 			WHERE view_name LIKE $1`,
+		viewName,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.parseRows(rows)
+}
+
+func (r *AggregationsRepositoryPg) GetAggsByHypertableAndViewName(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error) {
+	rows, err := r.conn.Query(context.Background(), `
+			SELECT
+				hypertable_name,
+				view_name,
+				materialized_only,
+				compression_enabled,
+				finalized
+			FROM timescaledb_information.continuous_aggregates
+			WHERE hypertable_name = $1 AND view_name LIKE $2`,
+		hypertableName,
 		viewName,
 	)
 	if err != nil {

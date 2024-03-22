@@ -15,11 +15,7 @@ import (
 )
 
 func main() {
-	options := config.NewCliOptions(
-		"",
-		false,
-		"",
-	)
+	options := config.NewCliOptions()
 
 	logger := slog.Default()
 	confFile, err := config.LoadConfig(options.ConfigPath, options.Env)
@@ -32,6 +28,7 @@ func main() {
 	conn := db.Connect(confConn)
 	defer conn.Close(context.Background())
 
+	// dependencies
 	aggsRepo := aggregations.NewAggregationsRepository(conn, slog.Default().WithGroup("aggregations"))
 	hypertableRepo := hypertables.NewHypertablesRepository(conn, slog.Default().WithGroup("hypertables"))
 	printer := printer.NewTabwriterPrinter()

@@ -26,12 +26,8 @@ type CliOptions struct {
 	Verbose    bool
 }
 
-func NewCliOptions(configPath string, verbose bool, env string) *CliOptions {
-	return &CliOptions{
-		ConfigPath: configPath,
-		Verbose:    verbose,
-		Env:        env,
-	}
+func NewCliOptions() *CliOptions {
+	return &CliOptions{}
 }
 
 func LoadConfig(path string, env string) (*ConfigFile, error) {
