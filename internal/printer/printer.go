@@ -14,7 +14,7 @@ type Printable interface {
 }
 
 type Printer interface {
-	Print(ref Printable, values []Printable) error
+	Print(ref any, values []any) error
 }
 
 type TabWriterPrinter struct {

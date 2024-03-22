@@ -1,21 +1,20 @@
 package commands
 
 import (
-	"github.com/jackc/pgx/v5"
-	"github.com/leometzger/timescale-cli/internal/config"
+	"github.com/leometzger/timescale-cli/internal/container"
 	"github.com/spf13/cobra"
 )
 
-func NewAggregationCommand(conn *pgx.Conn, options *config.CliOptions) *cobra.Command {
+func NewAggregationCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "aggregation",
 		Short: "Aggregation commands",
 	}
 
-	cmd.AddCommand(newCompressCommand(options))
-	cmd.AddCommand(newInspectCommand(options))
-	cmd.AddCommand(newListCommand(conn, options))
-	cmd.AddCommand(newRefreshCommand(options))
+	cmd.AddCommand(newCompressCommand(container))
+	cmd.AddCommand(newInspectCommand(container))
+	cmd.AddCommand(newListCommand(container))
+	cmd.AddCommand(newRefreshCommand(container))
 
 	return cmd
 }

@@ -3,11 +3,11 @@ package commands
 import (
 	"fmt"
 
-	"github.com/leometzger/timescale-cli/internal/config"
+	"github.com/leometzger/timescale-cli/internal/container"
 	"github.com/spf13/cobra"
 )
 
-func newInspectCommand(options *config.CliOptions) *cobra.Command {
+func newInspectCommand(cliContainer *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "inspect",
 		Aliases: []string{"ins"},

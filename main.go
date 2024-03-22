@@ -7,7 +7,11 @@ import (
 
 	cli "github.com/leometzger/timescale-cli/internal"
 	"github.com/leometzger/timescale-cli/internal/config"
+	"github.com/leometzger/timescale-cli/internal/container"
 	"github.com/leometzger/timescale-cli/internal/db"
+	"github.com/leometzger/timescale-cli/internal/domain/aggregations"
+	"github.com/leometzger/timescale-cli/internal/domain/hypertables"
+	"github.com/leometzger/timescale-cli/internal/printer"
 )
 
 func main() {
@@ -16,6 +20,7 @@ func main() {
 		false,
 		"",
 	)
+
 	logger := slog.Default()
 	confFile, err := config.LoadConfig(options.ConfigPath, options.Env)
 	if err != nil {
@@ -27,5 +32,11 @@ func main() {
 	conn := db.Connect(confConn)
 	defer conn.Close(context.Background())
 
-	cli.NewCli(conn, options).Execute()
+	aggsRepo := aggregations.NewAggregationsRepository(conn, slog.Default().WithGroup("aggregations"))
+	hypertableRepo := hypertables.NewHypertablesRepository(conn, slog.Default().WithGroup("hypertables"))
+	printer := printer.NewTabwriterPrinter()
+
+	container := container.NewCliContainer(aggsRepo, hypertableRepo, printer, options, confFile)
+
+	cli.NewCli(container).Execute()
 }

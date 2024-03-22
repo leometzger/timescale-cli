@@ -1,17 +1,14 @@
 package commands
 
 import (
-	"log/slog"
 	"os"
 
-	"github.com/jackc/pgx/v5"
-	"github.com/leometzger/timescale-cli/internal/config"
+	"github.com/leometzger/timescale-cli/internal/container"
 	"github.com/leometzger/timescale-cli/internal/domain/aggregations"
-	"github.com/leometzger/timescale-cli/internal/printer"
 	"github.com/spf13/cobra"
 )
 
-func newListCommand(conn *pgx.Conn, options *config.CliOptions) *cobra.Command {
+func newListCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "ls",
 		Aliases: []string{"list"},
@@ -19,11 +16,7 @@ func newListCommand(conn *pgx.Conn, options *config.CliOptions) *cobra.Command {
 		Long:    "",
 		Args:    cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			p := printer.NewTabwriterPrinter()
-			logger := slog.Default().WithGroup("test")
-			repo := aggregations.NewAggregationsRepository(conn, logger)
-
-			aggs, err := repo.GetAggs()
+			aggs, err := container.AggregationsRepository.GetAggs()
 			if err != nil {
 				os.Exit(1)
 			}
@@ -33,7 +26,7 @@ func newListCommand(conn *pgx.Conn, options *config.CliOptions) *cobra.Command {
 				values = append(values, agg)
 			}
 
-			p.Print(aggregations.ContinuousAggregationInfo{}, values)
+			container.Printer.Print(aggregations.ContinuousAggregationInfo{}, values)
 		},
 	}
 

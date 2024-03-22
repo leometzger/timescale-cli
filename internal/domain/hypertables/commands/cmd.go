@@ -1,19 +1,19 @@
 package commands
 
 import (
-	"github.com/leometzger/timescale-cli/internal/config"
+	"github.com/leometzger/timescale-cli/internal/container"
 	"github.com/spf13/cobra"
 )
 
-func NewHypertableCommands(options *config.CliOptions) *cobra.Command {
+func NewHypertableCommands(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "hypertable",
 		Aliases: []string{"h"},
 		Short:   "Hypertable commands",
 	}
 
-	cmd.AddCommand(newInspectCommand(options))
-	cmd.AddCommand(newListCommand(options))
+	cmd.AddCommand(newInspectCommand(container))
+	cmd.AddCommand(newListCommand(container))
 
 	return cmd
 }
