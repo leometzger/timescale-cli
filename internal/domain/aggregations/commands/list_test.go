@@ -3,11 +3,14 @@ package commands
 import (
 	"testing"
 
+	"github.com/leometzger/timescale-cli/testlib"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestListAggregationsWithoutFilter(t *testing.T) {
-
+func TestListAggregationsWithoutAnyFilter(t *testing.T) {
+	container := testlib.GetMockedContainer(t)
+	cmd := newListCommand(container)
+	cmd.Execute()
 }
 
 func TestListAggregationsWithFilter(t *testing.T) {

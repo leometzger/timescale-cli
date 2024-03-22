@@ -7,3 +7,6 @@ packages:
   github.com/leometzger/timescale-cli/internal/domain/hypertables:
     config:
       dir: internal/domain/hypertables/mocks
+  github.com/leometzger/timescale-cli/internal/printer:
+    config:
+      dir: internal/printer/mocks
