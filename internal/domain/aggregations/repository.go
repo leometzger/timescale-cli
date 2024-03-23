@@ -2,7 +2,9 @@ package aggregations
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -12,6 +14,9 @@ type AggregationsRepository interface {
 	GetAggsByHypertable(hypertableName string) ([]ContinuousAggregationInfo, error)
 	GetAggsByViewName(viewName string) ([]ContinuousAggregationInfo, error)
 	GetAggsByHypertableAndViewName(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error)
+	GetAggregations(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error)
+
+	Refresh(viewName string, start time.Time, end time.Time) error
 }
 
 type AggregationsRepositoryPg struct {
@@ -102,6 +107,36 @@ func (r *AggregationsRepositoryPg) GetAggsByHypertableAndViewName(hypertableName
 	}
 
 	return r.parseRows(rows)
+}
+
+func (r *AggregationsRepositoryPg) Refresh(viewName string, start time.Time, end time.Time) error {
+	r.logger.Info("refreshing continuous aggregation " + viewName)
+	command := fmt.Sprintf(
+		"CALL refresh_continuous_aggregate($1, '%s', '%s')",
+		start.Format("2006-01-02"),
+		end.Format("2006-01-02"),
+	)
+
+	_, err := r.conn.Exec(context.Background(), command, viewName)
+	if err != nil {
+		r.logger.Error("error refreshing "+viewName, "cause", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+// Guess the best method to find the specified aggregations
+func (r *AggregationsRepositoryPg) GetAggregations(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error) {
+	if viewName != "" && hypertableName != "" {
+		return r.GetAggsByHypertableAndViewName(hypertableName, viewName)
+	} else if viewName != "" {
+		return r.GetAggsByViewName(viewName)
+	} else if hypertableName != "" {
+		return r.GetAggsByHypertable(hypertableName)
+	} else {
+		return r.GetAggs()
+	}
 }
 
 func (r *AggregationsRepositoryPg) parseRows(rows pgx.Rows) ([]ContinuousAggregationInfo, error) {

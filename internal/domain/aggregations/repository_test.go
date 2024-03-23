@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"testing"
+	"time"
 
 	"github.com/leometzger/timescale-cli/testlib"
 	"github.com/stretchr/testify/assert"
@@ -66,4 +67,16 @@ func TestGetAggregationsReturnEmptyList(t *testing.T) {
 	assert.Nil(t, err, "should return empty list instead of error when there is no aggregations with view")
 	assert.NotNil(t, aggs)
 	assert.Equal(t, 0, len(aggs))
+}
+
+func TestShouldBeAbleToRefreshAContinuousAggregation(t *testing.T) {
+	conn := testlib.SetupDB()
+	defer conn.Close(context.Background())
+	repo := NewAggregationsRepository(conn, slog.Default())
+	start, _ := time.Parse("2006-01-02", "2023-05-31")
+	end, _ := time.Parse("2006-01-02", "2023-06-01")
+
+	err := repo.Refresh("metrics_by_day", start, end)
+
+	assert.Nil(t, err)
 }
