@@ -55,7 +55,7 @@ func LoadConnectionInfoEnv() *ConnectionInfo {
 	return connectionInfo
 }
 
-func LoadConnectionInfoWithConfigFile(configFile *config.ConfigFile) *ConnectionInfo {
+func LoadConnectionInfoWithConfigFile(configFile *config.ConfigEnvironment) *ConnectionInfo {
 	connectionInfo := LoadConnectionInfoEnv()
 
 	// @TODO it could have a better logic here (reflection maybe?)

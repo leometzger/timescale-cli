@@ -46,6 +46,8 @@ func newRefreshCommand(container *container.CliContainer) *cobra.Command {
 	cmd.Flags().StringP("end", "", "2020-01-01", "End date for the load")
 	cmd.Flags().StringP("view-name", "", "", "filter by view name (with LIKE option)")
 	cmd.Flags().StringP("hypertable", "", "", "filter by hypertable name")
+	cmd.Flags().StringP("pace", "", "", "pace that refresh should happen")
+	cmd.Flags().IntP("parallel", "", 0, "if should happen paralelly and how much paralelism should have")
 
 	return cmd
 }

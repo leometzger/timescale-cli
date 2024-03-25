@@ -2,9 +2,9 @@
   <img src="./assets/illustration.svg" width="35%" />
 </p>
 
-# TimescaleDB control commands
+# TimescaleDB CLI
 
-TimescaleDB Control CLI is a command-line tool for running some manual processes into TimescaleDB instances.
+TimescaleDB CLI is a unofficcial command-line tool for running some manual processes into TimescaleDB instances.
 
 ## Usage
 

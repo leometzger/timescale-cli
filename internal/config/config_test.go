@@ -53,11 +53,17 @@ func TestCreateNewConfigSucessfully(t *testing.T) {
 	}
 
 	err = os.Mkdir(tmp, os.ModePerm)
+	defer os.RemoveAll(tmp)
 	if err != nil {
 		log.Fatal("Error setting up the environment to test")
 	}
 
-	err = CreateConfig(tmp)
+	err = CreateConfig("staging", &ConfigEnvironment{
+		Host:     "timescale.staging.com",
+		Database: "dbstagig",
+		Port:     5433,
+		User:     "staging",
+	}, path.Join(tmp, DefaultConfigFileName))
 
 	assert.Nil(t, err)
 	assert.FileExists(t, path.Join(tmp, DefaultConfigFileName))

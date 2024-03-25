@@ -48,7 +48,7 @@ func TestCouldLoadConfigInfoFromEnvironment(t *testing.T) {
 
 func TestShouldBeAbleToMergeWithConfigFile(t *testing.T) {
 	setFakeEnvsDifferenteFromDefault()
-	confFile := &config.ConfigFile{
+	confFile := &config.ConfigEnvironment{
 		Host:     "localhost2",
 		Port:     5435,
 		User:     "user.conf",
