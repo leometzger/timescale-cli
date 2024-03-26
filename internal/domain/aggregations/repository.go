@@ -112,12 +112,13 @@ func (r *AggregationsRepositoryPg) GetAggsByHypertableAndViewName(hypertableName
 func (r *AggregationsRepositoryPg) Refresh(viewName string, start time.Time, end time.Time) error {
 	r.logger.Info("refreshing continuous aggregation " + viewName)
 	command := fmt.Sprintf(
-		"CALL refresh_continuous_aggregate($1, '%s', '%s')",
+		"CALL refresh_continuous_aggregate('\"%s\"', '%s', '%s')",
+		viewName,
 		start.Format("2006-01-02"),
 		end.Format("2006-01-02"),
 	)
 
-	_, err := r.conn.Exec(context.Background(), command, viewName)
+	_, err := r.conn.Exec(context.Background(), command)
 	if err != nil {
 		r.logger.Error("error refreshing "+viewName, "cause", err.Error())
 		return err

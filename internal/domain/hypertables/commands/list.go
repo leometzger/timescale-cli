@@ -16,6 +16,8 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 		Long:    "",
 		Args:    cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			container.Connect()
+
 			tables, err := container.HypertablesRepository.GetHypertables()
 			if err != nil {
 				os.Exit(1)

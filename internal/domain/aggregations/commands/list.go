@@ -13,6 +13,8 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 		Short:   "",
 		Long:    "",
 		Run: func(cmd *cobra.Command, args []string) {
+			container.Connect()
+
 			viewName, err := cmd.Flags().GetString("view-name")
 			exitOnError(err)
 

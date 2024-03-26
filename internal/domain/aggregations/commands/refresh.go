@@ -15,6 +15,8 @@ func newRefreshCommand(container *container.CliContainer) *cobra.Command {
 		Long:    "",
 		Args:    cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			container.Connect()
+
 			viewName, err := cmd.Flags().GetString("view-name")
 			exitOnError(err)
 
