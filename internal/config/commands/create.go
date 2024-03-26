@@ -69,7 +69,7 @@ func newCreateConfigCommand(container *container.CliContainer) *cobra.Command {
 			}, fullPath)
 			exitOnError(err)
 
-			logger.Info("created config on " + fullPath)
+			logger.Info("✔ setup config on " + fullPath)
 		},
 	}
 

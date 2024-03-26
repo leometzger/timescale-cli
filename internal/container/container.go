@@ -24,12 +24,10 @@ type CliContainer struct {
 func NewCliContainer(
 	printer printer.Printer,
 	options *config.CliOptions,
-	configFile *config.ConfigEnvironment,
 ) *CliContainer {
 	return &CliContainer{
-		Printer:    printer,
-		Options:    options,
-		ConfigFile: configFile,
+		Printer: printer,
+		Options: options,
 	}
 }
 

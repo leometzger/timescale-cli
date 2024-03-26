@@ -24,24 +24,32 @@ type ConfigEnvironment struct {
 type CliOptions struct {
 	Env        string
 	ConfigPath string
-	Verbose    bool
 }
 
 func NewCliOptions() *CliOptions {
 	return &CliOptions{}
 }
 
-func LoadConfig(path string, env string) (*ConfigEnvironment, error) {
+func loadConfig(path string) (map[string]*ConfigEnvironment, error) {
 	fileData, err := os.ReadFile(path)
 	if err != nil {
-		slog.Info("could not open config file, using default configuration")
-		return DefaultConfig(), nil
+		return nil, errors.New("not found")
 	}
 
 	conf := make(map[string]*ConfigEnvironment)
 	err = yaml.Unmarshal(fileData, conf)
 	if err != nil {
 		return nil, fmt.Errorf("error while parsing the config: %s", err)
+	}
+
+	return conf, nil
+}
+
+func LoadConfig(path string, env string) (*ConfigEnvironment, error) {
+	conf, err := loadConfig(path)
+	if err != nil {
+		slog.Info("could not find configuration, using default (localhost, postgres)")
+		return DefaultConfig(), nil
 	}
 
 	if conf[env] == nil {
@@ -59,25 +67,23 @@ func LoadConfig(path string, env string) (*ConfigEnvironment, error) {
 
 // creates a config into defualt file
 func CreateConfig(envName string, env *ConfigEnvironment, configPath string) error {
-	config := make(map[string]*ConfigEnvironment)
-	config[envName] = env
+	conf, _ := loadConfig(configPath)
+	if conf == nil {
+		slog.Info("could not find config, creating a new one")
+		conf = make(map[string]*ConfigEnvironment)
+	}
 
-	data, err := yaml.Marshal(config)
+	conf[envName] = env
+	data, err := yaml.Marshal(conf)
 	if err != nil {
 		return fmt.Errorf("error converting the default configuration to YAML: %v", err)
 	}
 
 	if _, err := os.Stat(configPath); errors.Is(err, os.ErrNotExist) {
-		err = os.MkdirAll(path.Dir(configPath), os.ModePerm)
+		err := createConfigFile(configPath)
 		if err != nil {
-			return fmt.Errorf("could not create directory of config path %v", err)
+			return err
 		}
-
-		f, err := os.Create(configPath)
-		if err != nil {
-			return fmt.Errorf("could not access config file %v", err)
-		}
-		f.Close()
 	}
 
 	err = os.WriteFile(configPath, data, 0644)
@@ -85,6 +91,20 @@ func CreateConfig(envName string, env *ConfigEnvironment, configPath string) err
 		return fmt.Errorf("error while writing the config: %v", err)
 	}
 
+	return nil
+}
+
+func createConfigFile(configPath string) error {
+	err := os.MkdirAll(path.Dir(configPath), os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("could not create directory of config path %v", err)
+	}
+
+	f, err := os.Create(configPath)
+	if err != nil {
+		return fmt.Errorf("could not access config file %v", err)
+	}
+	f.Close()
 	return nil
 }
 
@@ -99,11 +119,11 @@ func DefaultConfig() *ConfigEnvironment {
 	}
 }
 
-func DefaultConfPath() string {
+func GetDefaultConfigPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return path.Join(home, DefaultConfigFileName)
+	return path.Join(home, ".tsctl", DefaultConfigFileName)
 }
