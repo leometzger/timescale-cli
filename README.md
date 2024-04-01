@@ -18,7 +18,7 @@ Add the configuration to the config file
 tsctl config create --env staging --host db.timescale.staging --database tsdb
 ```
 
-List configurated environments
+List configurated environments (TODO
 
 ```sh
 tsctl config ls
@@ -64,7 +64,7 @@ tsctl hypertable ls
 tsctl hypertable ls --name %hourly
 ```
 
-Compress chunks manually from a start to end.
+Compress chunks manually from a start to end. (TODO)
 
 ```sh
 tsctl hypertable compress --from 2023-01-01 --to 2024-01-01
@@ -72,7 +72,7 @@ tsctl hypertable compress --from 2023-01-01 --to 2024-01-01
 tsctl hypertable compress --name %_metrics --from 2023-01-01 --to 2024-01-01
 ```
 
-Give detailed information about the hypertable, like how many chunks it has.
+Give detailed information about the hypertable, like how many chunks it has. (TODO)
 
 ```sh
 tsctl hypertable inspect metrics
