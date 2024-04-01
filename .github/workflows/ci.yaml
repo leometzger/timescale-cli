@@ -6,7 +6,7 @@ jobs:
   build:
     services:
       timescale:
-        image: postgres:15-alpine
+        image: timescaledb:latest-pg15
         env:
           # Defaults (not used anywhere)
           POSTGRES_USER: postgres
