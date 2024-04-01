@@ -31,7 +31,7 @@ func TestIsAbleToQueryTimescale(t *testing.T) {
 }
 
 func TestIsAbleToConfigureDBForTesting(t *testing.T) {
-	conn := testlib.SetupDB()
+	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 
 	assert.True(t, true)

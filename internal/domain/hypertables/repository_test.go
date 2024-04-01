@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetHypertableInformationFromTimescale(t *testing.T) {
-	conn := testlib.SetupDB()
+	conn := testlib.GetConnection()
 	repository := NewHypertablesRepository(conn, slog.Default().WithGroup("hypertables"))
 
 	hypertables, err := repository.GetHypertables()

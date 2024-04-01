@@ -11,7 +11,7 @@ import (
 )
 
 func TestShouldGetAggregationsInformation(t *testing.T) {
-	conn := testlib.SetupDB()
+	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
 
@@ -23,7 +23,7 @@ func TestShouldGetAggregationsInformation(t *testing.T) {
 }
 
 func TestShouldGetAggsByHypertable(t *testing.T) {
-	conn := testlib.SetupDB()
+	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
 
@@ -35,7 +35,7 @@ func TestShouldGetAggsByHypertable(t *testing.T) {
 }
 
 func TestGetAggsByHypertableInexistentHypertable(t *testing.T) {
-	conn := testlib.SetupDB()
+	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
 
@@ -46,7 +46,7 @@ func TestGetAggsByHypertableInexistentHypertable(t *testing.T) {
 }
 
 func TestShouldGetAggregationsByViewNameUsingLikeExpressions(t *testing.T) {
-	conn := testlib.SetupDB()
+	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
 
@@ -58,7 +58,7 @@ func TestShouldGetAggregationsByViewNameUsingLikeExpressions(t *testing.T) {
 }
 
 func TestGetAggregationsReturnEmptyList(t *testing.T) {
-	conn := testlib.SetupDB()
+	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
 
@@ -70,7 +70,7 @@ func TestGetAggregationsReturnEmptyList(t *testing.T) {
 }
 
 func TestShouldBeAbleToRefreshAContinuousAggregation(t *testing.T) {
-	conn := testlib.SetupDB()
+	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
 	start, _ := time.Parse("2006-01-02", "2023-05-31")

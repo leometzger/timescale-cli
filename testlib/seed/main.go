@@ -1,4 +1,4 @@
-package testlib
+package main
 
 import (
 	"context"
@@ -9,12 +9,26 @@ import (
 	"github.com/leometzger/timescale-cli/internal/db"
 )
 
-func SetupDB() *pgx.Conn {
+func main() {
 	info := db.NewConnectionInfo("localhost", 5432, "postgres", "postgres", "password")
 	conn := db.Connect(info)
+	defer conn.Close(context.Background())
 
+	// all exits on error
+	slog.Info("dropping all objects...")
 	dropAllObjects(conn)
 
+	slog.Info("creating metrics hypertable...")
+	createMetricsHypertable(conn)
+
+	slog.Info("inserting seed metrics...")
+	insertMetrics(conn)
+
+	slog.Info("creating continuous aggregations...")
+	createContinuousAggregations(conn)
+}
+
+func createMetricsHypertable(conn *pgx.Conn) {
 	_, err := conn.Exec(context.Background(), `
 		CREATE TABLE metrics(
 				created timestamp with time zone default now() not null,
@@ -38,10 +52,6 @@ func SetupDB() *pgx.Conn {
 		slog.Error("error setting chunk time interval: " + err.Error())
 		os.Exit(1)
 	}
-
-	insertMetrics(conn)
-	createContinuousAggregations(conn)
-	return conn
 }
 
 func dropAllObjects(conn *pgx.Conn) {
