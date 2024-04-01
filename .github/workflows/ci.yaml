@@ -6,11 +6,9 @@ jobs:
   build:
     services:
       timescale:
-        image: timescaledb:latest-pg15
+        image: timescale/timescaledb:latest-pg15
         env:
           # Defaults (not used anywhere)
-          POSTGRES_USER: postgres
-          POSTGRES_DB: postgres
           POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
