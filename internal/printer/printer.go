@@ -61,7 +61,7 @@ func (p *TabWriterPrinter) Print(ref any, values []any) error {
 			case reflect.Bool:
 				p.writer.Write([]byte(strconv.FormatBool(v.Bool())))
 			default:
-				slog.Error("invalid kind", k.Kind())
+				slog.Error("invalid kind", "kind", k.Kind())
 			}
 			p.writer.Write([]byte("\t"))
 		}

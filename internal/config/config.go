@@ -39,7 +39,7 @@ func loadConfig(path string) (map[string]*ConfigEnvironment, error) {
 	conf := make(map[string]*ConfigEnvironment)
 	err = yaml.Unmarshal(fileData, conf)
 	if err != nil {
-		return nil, fmt.Errorf("error while parsing the config: %s", err)
+		return conf, fmt.Errorf("error while parsing the config: %s", err)
 	}
 
 	return conf, nil
@@ -47,9 +47,13 @@ func loadConfig(path string) (map[string]*ConfigEnvironment, error) {
 
 func LoadConfig(path string, env string) (*ConfigEnvironment, error) {
 	conf, err := loadConfig(path)
-	if err != nil {
+	if conf == nil {
 		slog.Info("could not find configuration, using default (localhost, postgres)")
 		return DefaultConfig(), nil
+	}
+
+	if err != nil {
+		return nil, err
 	}
 
 	if conf[env] == nil {

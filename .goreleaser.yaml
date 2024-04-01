@@ -9,7 +9,7 @@ builds:
     goos:
       - linux
       - darwin
-    binary: dw
+    binary: tsctl
 
 archives:
   - format: tar.gz

@@ -28,10 +28,7 @@ func GetMockedContainer(t *testing.T) (*container.CliContainer, *Mocks) {
 	}
 
 	return container.NewCliContainer(
-		aggregationsRepo,
-		hypertablesRepo,
 		printerMock,
 		config.NewCliOptions(),
-		config.DefaultConfig(),
 	), mocks
 }
