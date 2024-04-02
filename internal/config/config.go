@@ -56,10 +56,6 @@ func LoadConfig(path string, env string) (*ConfigEnvironment, error) {
 		return nil, err
 	}
 
-	if conf[env] == nil {
-		return nil, fmt.Errorf("environment %s not found in the config %s", env, path)
-	}
-
 	return &ConfigEnvironment{
 		Host:     conf[env].Host,
 		Port:     conf[env].Port,

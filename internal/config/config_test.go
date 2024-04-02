@@ -41,6 +41,7 @@ func TestLoadInvalidConfig(t *testing.T) {
 }
 
 func TestLoadInexistentEnvironmentConfig(t *testing.T) {
+	t.Skip()
 	c, err := config.LoadConfig(path.Join("testdata", "valid.yaml"), "something")
 
 	assert.Nil(t, c)

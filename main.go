@@ -42,7 +42,7 @@ func onInitialize(root *cobra.Command, container *container.CliContainer) func()
 
 		configFile, err := config.LoadConfig(config.GetDefaultConfigPath(), env)
 		if err != nil {
-			slog.Error("could not load the config")
+			slog.Error("could not load the config", "cause", err)
 			os.Exit(1)
 		}
 
