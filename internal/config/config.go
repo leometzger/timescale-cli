@@ -99,7 +99,7 @@ func CreateConfig(envName string, env *ConfigEnvironment, configPath string) err
 }
 
 func createConfigFile(configPath string) error {
-	err := os.MkdirAll(path.Dir(configPath), os.ModePerm)
+	err := os.MkdirAll(path.Dir(configPath), 0666)
 	if err != nil {
 		return fmt.Errorf("could not create directory of config path %v", err)
 	}
@@ -108,6 +108,12 @@ func createConfigFile(configPath string) error {
 	if err != nil {
 		return fmt.Errorf("could not access config file %v", err)
 	}
+
+	err = f.Chmod(0666)
+	if err != nil {
+		return fmt.Errorf("could not change permissions of config file %v", err)
+	}
+
 	f.Close()
 	return nil
 }
