@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/leometzger/timescale-cli/internal/container"
+	"github.com/leometzger/timescale-cli/internal/domain/aggregations"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +36,10 @@ func newRefreshCommand(container *container.CliContainer) *cobra.Command {
 			end, err := time.Parse("2006-01-02", endParam)
 			exitOnError(err)
 
-			aggs, err := container.AggregationsRepository.GetAggregations(hypertableName, viewName)
+			aggs, err := container.AggregationsRepository.GetAggregations(&aggregations.AggregationsFilter{
+				HypertableName: hypertableName,
+				ViewName:       viewName,
+			})
 			exitOnError(err)
 
 			for _, agg := range aggs {
