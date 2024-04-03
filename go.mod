@@ -9,11 +9,15 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require github.com/stretchr/objx v0.5.2 // indirect
+require (
+	github.com/huandu/xstrings v1.3.2 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
+)
 
 require (
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/huandu/go-sqlbuilder v1.26.0
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect

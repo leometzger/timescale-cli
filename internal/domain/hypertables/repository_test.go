@@ -11,8 +11,9 @@ import (
 func TestGetHypertableInformationFromTimescale(t *testing.T) {
 	conn := testlib.GetConnection()
 	repository := NewHypertablesRepository(conn, slog.Default().WithGroup("hypertables"))
+	filter := HypertablesFilter{}
 
-	hypertables, err := repository.GetHypertables()
+	hypertables, err := repository.GetHypertables(&filter)
 
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(hypertables))

@@ -10,8 +10,8 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "ls",
 		Aliases: []string{"list"},
-		Short:   "",
-		Long:    "",
+		Short:   "List all continuous aggregations from Timescale",
+		Long:    `List all continuous aggregations from Timescale given a selected environment to execute the commands.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			container.Connect()
 
@@ -21,7 +21,12 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 			hypertableName, err := cmd.Flags().GetString("hypertable")
 			exitOnError(err)
 
-			aggs, err := container.AggregationsRepository.GetAggregations(hypertableName, viewName)
+			filter := &aggregations.AggregationsFilter{
+				HypertableName: hypertableName,
+				ViewName:       viewName,
+			}
+
+			aggs, err := container.AggregationsRepository.GetAggregations(filter)
 			exitOnError(err)
 
 			var values []any

@@ -6,17 +6,18 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/huandu/go-sqlbuilder"
 	"github.com/jackc/pgx/v5"
 )
 
 type AggregationsRepository interface {
-	GetAggs() ([]ContinuousAggregationInfo, error)
-	GetAggsByHypertable(hypertableName string) ([]ContinuousAggregationInfo, error)
-	GetAggsByViewName(viewName string) ([]ContinuousAggregationInfo, error)
-	GetAggsByHypertableAndViewName(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error)
-	GetAggregations(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error)
-
+	GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error)
 	Refresh(viewName string, start time.Time, end time.Time) error
+}
+
+type AggregationsFilter struct {
+	HypertableName string
+	ViewName       string
 }
 
 type AggregationsRepositoryPg struct {
@@ -31,78 +32,12 @@ func NewAggregationsRepository(conn *pgx.Conn, logger *slog.Logger) Aggregations
 	}
 }
 
-func (r *AggregationsRepositoryPg) GetAggs() ([]ContinuousAggregationInfo, error) {
-	rows, err := r.conn.Query(context.Background(), `
-			SELECT  
-				hypertable_name,
-				view_name,
-				materialized_only,
-				compression_enabled,
-				finalized
-			FROM timescaledb_information.continuous_aggregates
-		`,
-	)
+func (r *AggregationsRepositoryPg) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error) {
+	query, args := r.buildQuery(filter)
+
+	rows, err := r.conn.Query(context.Background(), query, args...)
 	if err != nil {
 		r.logger.Error("error querying continuous aggregates", "cause", err)
-		return nil, err
-	}
-
-	return r.parseRows(rows)
-}
-
-func (r *AggregationsRepositoryPg) GetAggsByHypertable(hypertableName string) ([]ContinuousAggregationInfo, error) {
-	rows, err := r.conn.Query(context.Background(), `
-		SELECT 
-			hypertable_name,
-			view_name,
-			materialized_only,
-			compression_enabled,
-			finalized
-		FROM timescaledb_information.continuous_aggregates
-		WHERE hypertable_name = $1`,
-		hypertableName,
-	)
-	if err != nil {
-		r.logger.Error("error querying continuous aggregates", "cause", err)
-		return nil, err
-	}
-
-	return r.parseRows(rows)
-}
-
-func (r *AggregationsRepositoryPg) GetAggsByViewName(viewName string) ([]ContinuousAggregationInfo, error) {
-	rows, err := r.conn.Query(context.Background(), `
-			SELECT 
-				hypertable_name,
-				view_name,
-				materialized_only,
-				compression_enabled,
-				finalized
-			FROM timescaledb_information.continuous_aggregates 
-			WHERE view_name LIKE $1`,
-		viewName,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return r.parseRows(rows)
-}
-
-func (r *AggregationsRepositoryPg) GetAggsByHypertableAndViewName(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error) {
-	rows, err := r.conn.Query(context.Background(), `
-			SELECT
-				hypertable_name,
-				view_name,
-				materialized_only,
-				compression_enabled,
-				finalized
-			FROM timescaledb_information.continuous_aggregates
-			WHERE hypertable_name = $1 AND view_name LIKE $2`,
-		hypertableName,
-		viewName,
-	)
-	if err != nil {
 		return nil, err
 	}
 
@@ -111,6 +46,7 @@ func (r *AggregationsRepositoryPg) GetAggsByHypertableAndViewName(hypertableName
 
 func (r *AggregationsRepositoryPg) Refresh(viewName string, start time.Time, end time.Time) error {
 	r.logger.Info("refreshing continuous aggregation " + viewName)
+
 	command := fmt.Sprintf(
 		"CALL refresh_continuous_aggregate('\"%s\"', '%s', '%s')",
 		viewName,
@@ -127,17 +63,27 @@ func (r *AggregationsRepositoryPg) Refresh(viewName string, start time.Time, end
 	return nil
 }
 
-// Guess the best method to find the specified aggregations
-func (r *AggregationsRepositoryPg) GetAggregations(hypertableName string, viewName string) ([]ContinuousAggregationInfo, error) {
-	if viewName != "" && hypertableName != "" {
-		return r.GetAggsByHypertableAndViewName(hypertableName, viewName)
-	} else if viewName != "" {
-		return r.GetAggsByViewName(viewName)
-	} else if hypertableName != "" {
-		return r.GetAggsByHypertable(hypertableName)
-	} else {
-		return r.GetAggs()
+func (r *AggregationsRepositoryPg) buildQuery(filter *AggregationsFilter) (string, []interface{}) {
+	sb := sqlbuilder.NewSelectBuilder()
+	sb.
+		Select(
+			"hypertable_name",
+			"view_name",
+			"materialized_only",
+			"compression_enabled",
+			"finalized",
+		).
+		From("timescaledb_information.continuous_aggregates")
+
+	if filter.HypertableName != "" {
+		sb.Where(sb.Equal("hypertable_name", filter.HypertableName))
 	}
+
+	if filter.ViewName != "" {
+		sb.Where(sb.Like("view_name", filter.ViewName))
+	}
+
+	return sb.Build()
 }
 
 func (r *AggregationsRepositoryPg) parseRows(rows pgx.Rows) ([]ContinuousAggregationInfo, error) {

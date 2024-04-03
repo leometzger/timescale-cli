@@ -13,9 +13,10 @@ import (
 func TestShouldGetAggregationsInformation(t *testing.T) {
 	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
+
 	repo := NewAggregationsRepository(conn, slog.Default())
 
-	aggs, err := repo.GetAggs()
+	aggs, err := repo.GetAggregations(&AggregationsFilter{})
 
 	assert.Nil(t, err)
 	assert.NotNil(t, aggs)
@@ -26,8 +27,9 @@ func TestShouldGetAggsByHypertable(t *testing.T) {
 	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
+	filter := AggregationsFilter{HypertableName: "metrics"}
 
-	aggs, err := repo.GetAggsByHypertable("metrics")
+	aggs, err := repo.GetAggregations(&filter)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, aggs)
@@ -38,8 +40,9 @@ func TestGetAggsByHypertableInexistentHypertable(t *testing.T) {
 	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
+	filter := AggregationsFilter{HypertableName: "inexistent_hypertable"}
 
-	aggs, err := repo.GetAggsByHypertable("inexistent_hypertable")
+	aggs, err := repo.GetAggregations(&filter)
 
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(aggs))
@@ -49,8 +52,9 @@ func TestShouldGetAggregationsByViewNameUsingLikeExpressions(t *testing.T) {
 	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
+	filter := AggregationsFilter{ViewName: "%by_hour"}
 
-	aggs, err := repo.GetAggsByViewName("%by_hour")
+	aggs, err := repo.GetAggregations(&filter)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, aggs)
@@ -61,8 +65,9 @@ func TestGetAggregationsReturnEmptyList(t *testing.T) {
 	conn := testlib.GetConnection()
 	defer conn.Close(context.Background())
 	repo := NewAggregationsRepository(conn, slog.Default())
+	filter := AggregationsFilter{ViewName: "%testingnotfoundagg"}
 
-	aggs, err := repo.GetAggsByViewName("%testingnotfoundagg")
+	aggs, err := repo.GetAggregations(&filter)
 
 	assert.Nil(t, err, "should return empty list instead of error when there is no aggregations with view")
 	assert.NotNil(t, aggs)

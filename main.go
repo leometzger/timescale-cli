@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/huandu/go-sqlbuilder"
 	"github.com/leometzger/timescale-cli/internal/config"
 	configCmd "github.com/leometzger/timescale-cli/internal/config/commands"
 	"github.com/leometzger/timescale-cli/internal/container"
@@ -14,6 +15,8 @@ import (
 )
 
 func main() {
+	sqlbuilder.DefaultFlavor = sqlbuilder.PostgreSQL
+
 	container := container.NewCliContainer(
 		printer.NewTabwriterPrinter(),
 		config.NewCliOptions(),
@@ -22,7 +25,7 @@ func main() {
 
 	cobra.OnInitialize(onInitialize(root, container))
 
-	root.PersistentFlags().StringP("env", "e", "development", "Environment of config to use")
+	root.PersistentFlags().StringP("env", "e", "default", "Environment of config to use")
 
 	root.AddCommand(configCmd.NewConfigCommand(container))
 	root.AddCommand(aggregation.NewAggregationCommand(container))
@@ -42,7 +45,7 @@ func onInitialize(root *cobra.Command, container *container.CliContainer) func()
 
 		configFile, err := config.LoadConfig(config.GetDefaultConfigPath(), env)
 		if err != nil {
-			slog.Error("could not load the config", "cause", err)
+			slog.Error(err.Error())
 			os.Exit(1)
 		}
 
