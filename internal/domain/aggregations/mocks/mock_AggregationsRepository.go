@@ -22,9 +22,9 @@ func (_m *MockAggregationsRepository) EXPECT() *MockAggregationsRepository_Expec
 	return &MockAggregationsRepository_Expecter{mock: &_m.Mock}
 }
 
-// GetAggregations provides a mock function with given fields: hypertableName, viewName
-func (_m *MockAggregationsRepository) GetAggregations(hypertableName string, viewName string) ([]aggregations.ContinuousAggregationInfo, error) {
-	ret := _m.Called(hypertableName, viewName)
+// GetAggregations provides a mock function with given fields: filter
+func (_m *MockAggregationsRepository) GetAggregations(filter *aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregationInfo, error) {
+	ret := _m.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAggregations")
@@ -32,19 +32,19 @@ func (_m *MockAggregationsRepository) GetAggregations(hypertableName string, vie
 
 	var r0 []aggregations.ContinuousAggregationInfo
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string) ([]aggregations.ContinuousAggregationInfo, error)); ok {
-		return rf(hypertableName, viewName)
+	if rf, ok := ret.Get(0).(func(*aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregationInfo, error)); ok {
+		return rf(filter)
 	}
-	if rf, ok := ret.Get(0).(func(string, string) []aggregations.ContinuousAggregationInfo); ok {
-		r0 = rf(hypertableName, viewName)
+	if rf, ok := ret.Get(0).(func(*aggregations.AggregationsFilter) []aggregations.ContinuousAggregationInfo); ok {
+		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]aggregations.ContinuousAggregationInfo)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string, string) error); ok {
-		r1 = rf(hypertableName, viewName)
+	if rf, ok := ret.Get(1).(func(*aggregations.AggregationsFilter) error); ok {
+		r1 = rf(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -58,15 +58,14 @@ type MockAggregationsRepository_GetAggregations_Call struct {
 }
 
 // GetAggregations is a helper method to define mock.On call
-//   - hypertableName string
-//   - viewName string
-func (_e *MockAggregationsRepository_Expecter) GetAggregations(hypertableName interface{}, viewName interface{}) *MockAggregationsRepository_GetAggregations_Call {
-	return &MockAggregationsRepository_GetAggregations_Call{Call: _e.mock.On("GetAggregations", hypertableName, viewName)}
+//   - filter *aggregations.AggregationsFilter
+func (_e *MockAggregationsRepository_Expecter) GetAggregations(filter interface{}) *MockAggregationsRepository_GetAggregations_Call {
+	return &MockAggregationsRepository_GetAggregations_Call{Call: _e.mock.On("GetAggregations", filter)}
 }
 
-func (_c *MockAggregationsRepository_GetAggregations_Call) Run(run func(hypertableName string, viewName string)) *MockAggregationsRepository_GetAggregations_Call {
+func (_c *MockAggregationsRepository_GetAggregations_Call) Run(run func(filter *aggregations.AggregationsFilter)) *MockAggregationsRepository_GetAggregations_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(string))
+		run(args[0].(*aggregations.AggregationsFilter))
 	})
 	return _c
 }
@@ -76,239 +75,7 @@ func (_c *MockAggregationsRepository_GetAggregations_Call) Return(_a0 []aggregat
 	return _c
 }
 
-func (_c *MockAggregationsRepository_GetAggregations_Call) RunAndReturn(run func(string, string) ([]aggregations.ContinuousAggregationInfo, error)) *MockAggregationsRepository_GetAggregations_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAggs provides a mock function with given fields:
-func (_m *MockAggregationsRepository) GetAggs() ([]aggregations.ContinuousAggregationInfo, error) {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAggs")
-	}
-
-	var r0 []aggregations.ContinuousAggregationInfo
-	var r1 error
-	if rf, ok := ret.Get(0).(func() ([]aggregations.ContinuousAggregationInfo, error)); ok {
-		return rf()
-	}
-	if rf, ok := ret.Get(0).(func() []aggregations.ContinuousAggregationInfo); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]aggregations.ContinuousAggregationInfo)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// MockAggregationsRepository_GetAggs_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAggs'
-type MockAggregationsRepository_GetAggs_Call struct {
-	*mock.Call
-}
-
-// GetAggs is a helper method to define mock.On call
-func (_e *MockAggregationsRepository_Expecter) GetAggs() *MockAggregationsRepository_GetAggs_Call {
-	return &MockAggregationsRepository_GetAggs_Call{Call: _e.mock.On("GetAggs")}
-}
-
-func (_c *MockAggregationsRepository_GetAggs_Call) Run(run func()) *MockAggregationsRepository_GetAggs_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockAggregationsRepository_GetAggs_Call) Return(_a0 []aggregations.ContinuousAggregationInfo, _a1 error) *MockAggregationsRepository_GetAggs_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *MockAggregationsRepository_GetAggs_Call) RunAndReturn(run func() ([]aggregations.ContinuousAggregationInfo, error)) *MockAggregationsRepository_GetAggs_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAggsByHypertable provides a mock function with given fields: hypertableName
-func (_m *MockAggregationsRepository) GetAggsByHypertable(hypertableName string) ([]aggregations.ContinuousAggregationInfo, error) {
-	ret := _m.Called(hypertableName)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAggsByHypertable")
-	}
-
-	var r0 []aggregations.ContinuousAggregationInfo
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string) ([]aggregations.ContinuousAggregationInfo, error)); ok {
-		return rf(hypertableName)
-	}
-	if rf, ok := ret.Get(0).(func(string) []aggregations.ContinuousAggregationInfo); ok {
-		r0 = rf(hypertableName)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]aggregations.ContinuousAggregationInfo)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(hypertableName)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// MockAggregationsRepository_GetAggsByHypertable_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAggsByHypertable'
-type MockAggregationsRepository_GetAggsByHypertable_Call struct {
-	*mock.Call
-}
-
-// GetAggsByHypertable is a helper method to define mock.On call
-//   - hypertableName string
-func (_e *MockAggregationsRepository_Expecter) GetAggsByHypertable(hypertableName interface{}) *MockAggregationsRepository_GetAggsByHypertable_Call {
-	return &MockAggregationsRepository_GetAggsByHypertable_Call{Call: _e.mock.On("GetAggsByHypertable", hypertableName)}
-}
-
-func (_c *MockAggregationsRepository_GetAggsByHypertable_Call) Run(run func(hypertableName string)) *MockAggregationsRepository_GetAggsByHypertable_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
-	})
-	return _c
-}
-
-func (_c *MockAggregationsRepository_GetAggsByHypertable_Call) Return(_a0 []aggregations.ContinuousAggregationInfo, _a1 error) *MockAggregationsRepository_GetAggsByHypertable_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *MockAggregationsRepository_GetAggsByHypertable_Call) RunAndReturn(run func(string) ([]aggregations.ContinuousAggregationInfo, error)) *MockAggregationsRepository_GetAggsByHypertable_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAggsByHypertableAndViewName provides a mock function with given fields: hypertableName, viewName
-func (_m *MockAggregationsRepository) GetAggsByHypertableAndViewName(hypertableName string, viewName string) ([]aggregations.ContinuousAggregationInfo, error) {
-	ret := _m.Called(hypertableName, viewName)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAggsByHypertableAndViewName")
-	}
-
-	var r0 []aggregations.ContinuousAggregationInfo
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string) ([]aggregations.ContinuousAggregationInfo, error)); ok {
-		return rf(hypertableName, viewName)
-	}
-	if rf, ok := ret.Get(0).(func(string, string) []aggregations.ContinuousAggregationInfo); ok {
-		r0 = rf(hypertableName, viewName)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]aggregations.ContinuousAggregationInfo)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(string, string) error); ok {
-		r1 = rf(hypertableName, viewName)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// MockAggregationsRepository_GetAggsByHypertableAndViewName_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAggsByHypertableAndViewName'
-type MockAggregationsRepository_GetAggsByHypertableAndViewName_Call struct {
-	*mock.Call
-}
-
-// GetAggsByHypertableAndViewName is a helper method to define mock.On call
-//   - hypertableName string
-//   - viewName string
-func (_e *MockAggregationsRepository_Expecter) GetAggsByHypertableAndViewName(hypertableName interface{}, viewName interface{}) *MockAggregationsRepository_GetAggsByHypertableAndViewName_Call {
-	return &MockAggregationsRepository_GetAggsByHypertableAndViewName_Call{Call: _e.mock.On("GetAggsByHypertableAndViewName", hypertableName, viewName)}
-}
-
-func (_c *MockAggregationsRepository_GetAggsByHypertableAndViewName_Call) Run(run func(hypertableName string, viewName string)) *MockAggregationsRepository_GetAggsByHypertableAndViewName_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(string))
-	})
-	return _c
-}
-
-func (_c *MockAggregationsRepository_GetAggsByHypertableAndViewName_Call) Return(_a0 []aggregations.ContinuousAggregationInfo, _a1 error) *MockAggregationsRepository_GetAggsByHypertableAndViewName_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *MockAggregationsRepository_GetAggsByHypertableAndViewName_Call) RunAndReturn(run func(string, string) ([]aggregations.ContinuousAggregationInfo, error)) *MockAggregationsRepository_GetAggsByHypertableAndViewName_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetAggsByViewName provides a mock function with given fields: viewName
-func (_m *MockAggregationsRepository) GetAggsByViewName(viewName string) ([]aggregations.ContinuousAggregationInfo, error) {
-	ret := _m.Called(viewName)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAggsByViewName")
-	}
-
-	var r0 []aggregations.ContinuousAggregationInfo
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string) ([]aggregations.ContinuousAggregationInfo, error)); ok {
-		return rf(viewName)
-	}
-	if rf, ok := ret.Get(0).(func(string) []aggregations.ContinuousAggregationInfo); ok {
-		r0 = rf(viewName)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]aggregations.ContinuousAggregationInfo)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(viewName)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// MockAggregationsRepository_GetAggsByViewName_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAggsByViewName'
-type MockAggregationsRepository_GetAggsByViewName_Call struct {
-	*mock.Call
-}
-
-// GetAggsByViewName is a helper method to define mock.On call
-//   - viewName string
-func (_e *MockAggregationsRepository_Expecter) GetAggsByViewName(viewName interface{}) *MockAggregationsRepository_GetAggsByViewName_Call {
-	return &MockAggregationsRepository_GetAggsByViewName_Call{Call: _e.mock.On("GetAggsByViewName", viewName)}
-}
-
-func (_c *MockAggregationsRepository_GetAggsByViewName_Call) Run(run func(viewName string)) *MockAggregationsRepository_GetAggsByViewName_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
-	})
-	return _c
-}
-
-func (_c *MockAggregationsRepository_GetAggsByViewName_Call) Return(_a0 []aggregations.ContinuousAggregationInfo, _a1 error) *MockAggregationsRepository_GetAggsByViewName_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *MockAggregationsRepository_GetAggsByViewName_Call) RunAndReturn(run func(string) ([]aggregations.ContinuousAggregationInfo, error)) *MockAggregationsRepository_GetAggsByViewName_Call {
+func (_c *MockAggregationsRepository_GetAggregations_Call) RunAndReturn(run func(*aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregationInfo, error)) *MockAggregationsRepository_GetAggregations_Call {
 	_c.Call.Return(run)
 	return _c
 }

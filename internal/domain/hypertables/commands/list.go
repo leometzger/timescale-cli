@@ -5,6 +5,7 @@ import (
 
 	"github.com/leometzger/timescale-cli/internal/container"
 	"github.com/leometzger/timescale-cli/internal/domain/hypertables"
+	"github.com/leometzger/timescale-cli/internal/printer"
 	"github.com/spf13/cobra"
 )
 
@@ -19,14 +20,15 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 			container.Connect()
 
 			filter := hypertables.HypertablesFilter{}
+
 			tables, err := container.HypertablesRepository.GetHypertables(&filter)
 			if err != nil {
 				os.Exit(1)
 			}
 
-			var values []any
-			for _, agg := range tables {
-				values = append(values, agg)
+			var values []printer.Printable = make([]printer.Printable, len(tables))
+			for i, table := range tables {
+				values[i] = table
 			}
 
 			container.Printer.Print(hypertables.HypertableInfo{}, values)

@@ -1,5 +1,12 @@
 package hypertables
 
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/leometzger/timescale-cli/internal/domain"
+)
+
 // complete representation of hypertable from
 // timescaledb_information.hypertables
 type Hypertable struct {
@@ -11,19 +18,29 @@ type Hypertable struct {
 	CompressionEnabled bool
 }
 
-// representation of a hypertable
-
-// with just the important fields
-type HypertableInfo struct {
-	HypertableName     string `header:"HYPERTABLE"`
-	NumChunks          int64  `header:"CHUNKS"`
-	CompressionEnabled bool   `header:"COMPRESSION ENABLED"`
-	Size               string `header:"SIZE"`
+type HypertablesFilter struct {
+	Name       string
+	Compressed domain.OptionFlag
 }
 
-type Chunk struct{}
+// representation of a displayed hypertable
+// with default important fields
+type HypertableInfo struct {
+	HypertableName     string
+	NumChunks          int64
+	CompressionEnabled bool
+	Size               string
+}
 
-type ChunkInfo struct {
-	ChunkName string `header:"CHUNK"`
-	Size      int64  `header:"SIZE"`
+func (h HypertableInfo) Headers() []string {
+	return []string{"HYPERTABLE", "CHUNKS", "COMPRESSION ENABLED", "SIZE"}
+}
+
+func (h HypertableInfo) Values() []string {
+	return []string{
+		h.HypertableName,
+		fmt.Sprint(h.NumChunks),
+		strconv.FormatBool(h.CompressionEnabled),
+		h.Size,
+	}
 }

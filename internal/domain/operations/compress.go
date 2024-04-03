@@ -6,6 +6,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/leometzger/timescale-cli/internal/domain/aggregations"
+	"github.com/leometzger/timescale-cli/internal/domain/chunks"
 	"github.com/leometzger/timescale-cli/internal/domain/hypertables"
 )
 
@@ -19,8 +20,8 @@ type Compressor interface {
 	CompressAggregation(aggregation aggregations.ContinuousAggregation, olderThan time.Time, newerThan time.Time) error
 	DecompressAggregation(aggregation aggregations.ContinuousAggregation, olderThan time.Time, newerThan time.Time) error
 
-	CompressChunk(chunk hypertables.Chunk) error
-	DecompressChunk(chunk hypertables.Chunk) error
+	CompressChunk(chunk chunks.Chunk) error
+	DecompressChunk(chunk chunks.Chunk) error
 }
 
 type TimescaleCompressor struct {

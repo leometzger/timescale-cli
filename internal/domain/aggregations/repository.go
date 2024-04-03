@@ -8,6 +8,8 @@ import (
 
 	"github.com/huandu/go-sqlbuilder"
 	"github.com/jackc/pgx/v5"
+	"github.com/leometzger/timescale-cli/internal/db"
+	"github.com/leometzger/timescale-cli/internal/domain"
 )
 
 type AggregationsRepository interface {
@@ -18,14 +20,15 @@ type AggregationsRepository interface {
 type AggregationsFilter struct {
 	HypertableName string
 	ViewName       string
+	Compressed     domain.OptionFlag
 }
 
 type AggregationsRepositoryPg struct {
-	conn   *pgx.Conn
+	conn   db.PgxIface
 	logger *slog.Logger
 }
 
-func NewAggregationsRepository(conn *pgx.Conn, logger *slog.Logger) AggregationsRepository {
+func NewAggregationsRepository(conn db.PgxIface, logger *slog.Logger) AggregationsRepository {
 	return &AggregationsRepositoryPg{
 		conn:   conn,
 		logger: logger,
@@ -65,15 +68,13 @@ func (r *AggregationsRepositoryPg) Refresh(viewName string, start time.Time, end
 
 func (r *AggregationsRepositoryPg) buildQuery(filter *AggregationsFilter) (string, []interface{}) {
 	sb := sqlbuilder.NewSelectBuilder()
-	sb.
-		Select(
-			"hypertable_name",
-			"view_name",
-			"materialized_only",
-			"compression_enabled",
-			"finalized",
-		).
-		From("timescaledb_information.continuous_aggregates")
+	sb.Select(
+		"hypertable_name",
+		"view_name",
+		"materialized_only",
+		"compression_enabled",
+		"finalized",
+	).From("timescaledb_information.continuous_aggregates")
 
 	if filter.HypertableName != "" {
 		sb.Where(sb.Equal("hypertable_name", filter.HypertableName))
@@ -81,6 +82,12 @@ func (r *AggregationsRepositoryPg) buildQuery(filter *AggregationsFilter) (strin
 
 	if filter.ViewName != "" {
 		sb.Where(sb.Like("view_name", filter.ViewName))
+	}
+
+	if filter.Compressed == domain.OptionFlagTrue {
+		sb.Where("compression_enabled = true")
+	} else if filter.Compressed == domain.OptionFlagFalse {
+		sb.Where("compression_enabled = false")
 	}
 
 	return sb.Build()

@@ -18,7 +18,7 @@ func main() {
 	sqlbuilder.DefaultFlavor = sqlbuilder.PostgreSQL
 
 	container := container.NewCliContainer(
-		printer.NewTabwriterPrinter(),
+		printer.NewTabwriterPrinter(os.Stdout),
 		config.NewCliOptions(),
 	)
 	root := &cobra.Command{}

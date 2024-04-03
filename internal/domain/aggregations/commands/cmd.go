@@ -14,7 +14,6 @@ func NewAggregationCommand(container *container.CliContainer) *cobra.Command {
 		Short: "Aggregation commands",
 	}
 
-	cmd.AddCommand(newCompressCommand(container))
 	cmd.AddCommand(newInspectCommand(container))
 	cmd.AddCommand(newListCommand(container))
 	cmd.AddCommand(newRefreshCommand(container))

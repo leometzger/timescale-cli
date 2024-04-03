@@ -12,13 +12,13 @@ func newRefreshCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "refresh",
 		Aliases: []string{},
-		Short:   "",
+		Short:   "refreshes continuous aggregations that match the filter",
 		Long:    "",
 		Args:    cobra.ExactArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			container.Connect()
 
-			viewName, err := cmd.Flags().GetString("view-name")
+			viewName, err := cmd.Flags().GetString("view")
 			exitOnError(err)
 
 			hypertableName, err := cmd.Flags().GetString("hypertable")
@@ -48,11 +48,14 @@ func newRefreshCommand(container *container.CliContainer) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("start", "", "2019-01-01", "Start date for the load")
-	cmd.Flags().StringP("end", "", "2020-01-01", "End date for the load")
-	cmd.Flags().StringP("view-name", "", "", "filter by view name (with LIKE option)")
+	cmd.Flags().StringP("start", "s", "2019-01-01", "Start date for the load")
+	cmd.Flags().StringP("end", "e", "2020-01-01", "End date for the load")
+	cmd.Flags().StringP("view", "v", "", "filter by view name (with LIKE option)")
 	cmd.Flags().StringP("hypertable", "", "", "filter by hypertable name")
-	cmd.Flags().StringP("pace", "", "", "pace that refresh should happen")
+
+	// @TODO to implement
+	cmd.Flags().IntP("pace", "", 0, "pace that refresh should happen (in days)")
+	cmd.Flags().StringP("decompress", "", "", "flag if should be decompressed/recompressed while refreshing")
 	cmd.Flags().IntP("parallel", "", 0, "if should happen paralelly and how much paralelism should have")
 
 	return cmd

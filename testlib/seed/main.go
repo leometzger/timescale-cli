@@ -91,7 +91,21 @@ func createContinuousAggregations(conn *pgx.Conn) {
 		FROM metrics
 		GROUP BY bucket, type_id;
 	`)
+	if err != nil {
+		slog.Error("error creating continuous aggregates for testing porpose", "cause", err)
+		os.Exit(1)
+	}
 
+	_, err = conn.Exec(context.Background(), `
+		CREATE MATERIALIZED VIEW metrics_by_month WITH (timescaledb.continuous) AS
+		SELECT 
+			time_bucket(interval '1 month', bucket) AS bucket,
+			type_id,
+			count(*) as count,
+			sum(sum)
+		FROM metrics_by_hour
+		GROUP BY 1, type_id;
+	`)
 	if err != nil {
 		slog.Error("error creating continuous aggregates for testing porpose", "cause", err)
 		os.Exit(1)

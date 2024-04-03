@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/leometzger/timescale-cli/internal/container"
 	"github.com/leometzger/timescale-cli/internal/domain/aggregations"
+	"github.com/leometzger/timescale-cli/internal/printer"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +16,7 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			container.Connect()
 
-			viewName, err := cmd.Flags().GetString("view-name")
+			viewName, err := cmd.Flags().GetString("view")
 			exitOnError(err)
 
 			hypertableName, err := cmd.Flags().GetString("hypertable")
@@ -29,16 +30,16 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 			aggs, err := container.AggregationsRepository.GetAggregations(filter)
 			exitOnError(err)
 
-			var values []any
-			for _, agg := range aggs {
-				values = append(values, agg)
+			var values []printer.Printable = make([]printer.Printable, len(aggs))
+			for i, agg := range aggs {
+				values[i] = agg
 			}
 
 			container.Printer.Print(aggregations.ContinuousAggregationInfo{}, values)
 		},
 	}
 
-	cmd.Flags().StringP("view-name", "", "", "filter by view name (with LIKE option)")
+	cmd.Flags().StringP("view", "v", "", "filter by view name (with LIKE option)")
 	cmd.Flags().StringP("hypertable", "", "", "filter by hypertable name")
 
 	return cmd

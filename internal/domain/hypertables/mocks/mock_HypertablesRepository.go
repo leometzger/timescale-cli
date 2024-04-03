@@ -20,9 +20,9 @@ func (_m *MockHypertablesRepository) EXPECT() *MockHypertablesRepository_Expecte
 	return &MockHypertablesRepository_Expecter{mock: &_m.Mock}
 }
 
-// GetHypertables provides a mock function with given fields:
-func (_m *MockHypertablesRepository) GetHypertables() ([]hypertables.HypertableInfo, error) {
-	ret := _m.Called()
+// GetHypertables provides a mock function with given fields: filter
+func (_m *MockHypertablesRepository) GetHypertables(filter *hypertables.HypertablesFilter) ([]hypertables.HypertableInfo, error) {
+	ret := _m.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetHypertables")
@@ -30,19 +30,19 @@ func (_m *MockHypertablesRepository) GetHypertables() ([]hypertables.HypertableI
 
 	var r0 []hypertables.HypertableInfo
 	var r1 error
-	if rf, ok := ret.Get(0).(func() ([]hypertables.HypertableInfo, error)); ok {
-		return rf()
+	if rf, ok := ret.Get(0).(func(*hypertables.HypertablesFilter) ([]hypertables.HypertableInfo, error)); ok {
+		return rf(filter)
 	}
-	if rf, ok := ret.Get(0).(func() []hypertables.HypertableInfo); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(*hypertables.HypertablesFilter) []hypertables.HypertableInfo); ok {
+		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]hypertables.HypertableInfo)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
+	if rf, ok := ret.Get(1).(func(*hypertables.HypertablesFilter) error); ok {
+		r1 = rf(filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -56,13 +56,14 @@ type MockHypertablesRepository_GetHypertables_Call struct {
 }
 
 // GetHypertables is a helper method to define mock.On call
-func (_e *MockHypertablesRepository_Expecter) GetHypertables() *MockHypertablesRepository_GetHypertables_Call {
-	return &MockHypertablesRepository_GetHypertables_Call{Call: _e.mock.On("GetHypertables")}
+//   - filter *hypertables.HypertablesFilter
+func (_e *MockHypertablesRepository_Expecter) GetHypertables(filter interface{}) *MockHypertablesRepository_GetHypertables_Call {
+	return &MockHypertablesRepository_GetHypertables_Call{Call: _e.mock.On("GetHypertables", filter)}
 }
 
-func (_c *MockHypertablesRepository_GetHypertables_Call) Run(run func()) *MockHypertablesRepository_GetHypertables_Call {
+func (_c *MockHypertablesRepository_GetHypertables_Call) Run(run func(filter *hypertables.HypertablesFilter)) *MockHypertablesRepository_GetHypertables_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		run(args[0].(*hypertables.HypertablesFilter))
 	})
 	return _c
 }
@@ -72,7 +73,7 @@ func (_c *MockHypertablesRepository_GetHypertables_Call) Return(_a0 []hypertable
 	return _c
 }
 
-func (_c *MockHypertablesRepository_GetHypertables_Call) RunAndReturn(run func() ([]hypertables.HypertableInfo, error)) *MockHypertablesRepository_GetHypertables_Call {
+func (_c *MockHypertablesRepository_GetHypertables_Call) RunAndReturn(run func(*hypertables.HypertablesFilter) ([]hypertables.HypertableInfo, error)) *MockHypertablesRepository_GetHypertables_Call {
 	_c.Call.Return(run)
 	return _c
 }

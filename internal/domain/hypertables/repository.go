@@ -3,27 +3,23 @@ package hypertables
 import (
 	"context"
 	"log/slog"
-	"time"
 
 	"github.com/huandu/go-sqlbuilder"
 	"github.com/jackc/pgx/v5"
+	"github.com/leometzger/timescale-cli/internal/db"
+	"github.com/leometzger/timescale-cli/internal/domain"
 )
 
 type HypertablesRepository interface {
 	GetHypertables(filter *HypertablesFilter) ([]HypertableInfo, error)
 }
 
-type HypertablesFilter struct {
-	Name       string
-	Compressed bool
-}
-
 type HypertablesRepositoryPg struct {
-	conn   *pgx.Conn
+	conn   db.PgxIface
 	logger *slog.Logger
 }
 
-func NewHypertablesRepository(conn *pgx.Conn, logger *slog.Logger) HypertablesRepository {
+func NewHypertablesRepository(conn db.PgxIface, logger *slog.Logger) HypertablesRepository {
 	return &HypertablesRepositoryPg{
 		conn:   conn,
 		logger: logger,
@@ -44,14 +40,22 @@ func (r *HypertablesRepositoryPg) GetHypertables(filter *HypertablesFilter) ([]H
 
 func (r *HypertablesRepositoryPg) buildQuery(filter *HypertablesFilter) (string, []interface{}) {
 	sb := sqlbuilder.NewSelectBuilder()
-	sb.
-		Select(
-			"hypertable_name",
-			"num_chunks",
-			"compression_enabled",
-			"pg_size_pretty(hypertable_size(format('%I.%I', hypertable_schema, hypertable_name)::regclass)) as size",
-		).
-		From("timescaledb_information.hypertables")
+	sb.Select(
+		"hypertable_name",
+		"num_chunks",
+		"compression_enabled",
+		"pg_size_pretty(hypertable_size(format('%I.%I', hypertable_schema, hypertable_name)::regclass)) as size",
+	).From("timescaledb_information.hypertables")
+
+	if filter.Name != "" {
+		sb.Where("hypertable_name LIKE ?", filter.Name)
+	}
+
+	if filter.Compressed == domain.OptionFlagTrue {
+		sb.Where("compression_enabled = true")
+	} else if filter.Compressed == domain.OptionFlagFalse {
+		sb.Where("compression_enabled = false")
+	}
 
 	return sb.Build()
 }
@@ -66,27 +70,4 @@ func (r *HypertablesRepositoryPg) parseRows(rows pgx.Rows) ([]HypertableInfo, er
 		return nil, err
 	}
 	return hypertables, nil
-}
-
-func (r *HypertablesRepositoryPg) ShowChunks(hypertableName string, newerThan time.Time, olderThan time.Time) ([]Chunk, error) {
-	_, err := r.conn.Query(
-		context.Background(),
-		`SELECT show_chunks($1, $2, $3)`,
-		hypertableName,
-		newerThan,
-		olderThan,
-	)
-	return nil, err
-}
-
-func (r *HypertablesRepositoryPg) parseRowsChunk(rows pgx.Rows) ([]ChunkInfo, error) {
-	chunks, err := pgx.CollectRows(
-		rows,
-		pgx.RowToStructByName[ChunkInfo],
-	)
-	if err != nil {
-		r.logger.Error("error parsing chunks", "cause", err)
-		return nil, err
-	}
-	return chunks, nil
 }
