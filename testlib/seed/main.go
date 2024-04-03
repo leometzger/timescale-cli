@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/leometzger/timescale-cli/internal/db"
 )
 
@@ -28,7 +27,7 @@ func main() {
 	createContinuousAggregations(conn)
 }
 
-func createMetricsHypertable(conn *pgx.Conn) {
+func createMetricsHypertable(conn db.PgxIface) {
 	_, err := conn.Exec(context.Background(), `
 		CREATE TABLE metrics(
 				created timestamp with time zone default now() not null,
@@ -54,7 +53,7 @@ func createMetricsHypertable(conn *pgx.Conn) {
 	}
 }
 
-func dropAllObjects(conn *pgx.Conn) {
+func dropAllObjects(conn db.PgxIface) {
 	_, err := conn.Exec(context.Background(), `
 		DROP TABLE IF EXISTS metrics CASCADE;
 	`)
@@ -64,7 +63,7 @@ func dropAllObjects(conn *pgx.Conn) {
 	}
 }
 
-func createContinuousAggregations(conn *pgx.Conn) {
+func createContinuousAggregations(conn db.PgxIface) {
 	_, err := conn.Exec(context.Background(), `
 		CREATE MATERIALIZED VIEW metrics_by_day WITH (timescaledb.continuous) AS
 		SELECT 
@@ -115,7 +114,7 @@ func createContinuousAggregations(conn *pgx.Conn) {
 // inserts some energy metrics into timescale
 // it gets the data from the following link
 // https://docs.timescale.com/tutorials/latest/energy-data/
-func insertMetrics(conn *pgx.Conn) {
+func insertMetrics(conn db.PgxIface) {
 	_, err := conn.Exec(context.Background(), `
 		INSERT INTO metrics (created, type_id, value) 
 		VALUES

@@ -4,7 +4,6 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/leometzger/timescale-cli/internal/config"
 	"github.com/leometzger/timescale-cli/internal/db"
 	"github.com/leometzger/timescale-cli/internal/domain/aggregations"
@@ -13,7 +12,7 @@ import (
 )
 
 type CliContainer struct {
-	conn                   *pgx.Conn
+	conn                   db.PgxIface
 	AggregationsRepository aggregations.AggregationsRepository
 	HypertablesRepository  hypertables.HypertablesRepository
 	Printer                printer.Printer
