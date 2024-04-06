@@ -48,7 +48,14 @@ func (r *AggregationsRepositoryPg) GetAggregations(filter *AggregationsFilter) (
 }
 
 func (r *AggregationsRepositoryPg) Refresh(viewName string, start time.Time, end time.Time) error {
-	r.logger.Info("refreshing continuous aggregation " + viewName)
+	r.logger.Info(
+		fmt.Sprintf(
+			"refreshing %s from %s to %s",
+			viewName,
+			start.Format("2006-01-02"),
+			end.Format("2006-01-02"),
+		),
+	)
 
 	command := fmt.Sprintf(
 		"CALL refresh_continuous_aggregate('\"%s\"', '%s', '%s')",
