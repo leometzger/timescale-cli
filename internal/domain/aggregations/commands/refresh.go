@@ -39,33 +39,25 @@ func newRefreshCommand(container *container.CliContainer) *cobra.Command {
 			pace, err := cmd.Flags().GetInt16("pace")
 			exitOnError(err)
 
-			aggs, err := container.AggregationsRepository.GetAggregations(&aggregations.AggregationsFilter{
-				HypertableName: hypertableName,
-				ViewName:       viewName,
-			})
-			exitOnError(err)
-
-			if pace > 0 {
-				pointer := start
-
-				for pointer.Add(time.Duration(24*pace) * time.Hour).Before(end) {
-					for _, agg := range aggs {
-						container.AggregationsRepository.Refresh(agg.ViewName, pointer, pointer.Add(time.Duration(pace*24)*time.Hour))
-					}
-
-					pointer = pointer.Add(time.Duration(pace*24) * time.Hour)
-				}
-			} else {
-				for _, agg := range aggs {
-					container.AggregationsRepository.Refresh(agg.ViewName, start, end)
-				}
-			}
+			container.AggregationsService.Refresh(
+				&aggregations.RefreshConfig{
+					Start: start,
+					End:   end,
+					Pace:  pace,
+					Filter: &aggregations.AggregationsFilter{
+						HypertableName: hypertableName,
+						ViewName:       viewName,
+					},
+				},
+			)
 		},
 	}
 
 	cmd.Flags().StringP("start", "s", "2019-01-01", "Start date for the load")
 	cmd.Flags().StringP("end", "", "2020-01-01", "End date for the load")
+
 	cmd.Flags().StringP("view", "v", "", "filter by view name (with LIKE option)")
+	cmd.Flags().BoolP("compressed", "", false, "filter by only compressed continuous aggregations")
 	cmd.Flags().StringP("hypertable", "", "", "filter by hypertable name")
 	cmd.Flags().Int16P("pace", "", 0, "pace that refresh should happen (in days)")
 

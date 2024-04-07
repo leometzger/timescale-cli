@@ -1,6 +1,11 @@
 package aggregations
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+
+	"github.com/leometzger/timescale-cli/internal/domain"
+)
 
 // complete representation of continuous_aggregation from
 // timescaledb_information.continuous_aggregates
@@ -16,6 +21,19 @@ type ContinuousAggregation struct {
 	MaterializationHypertableName   string
 	ViewDefinition                  string
 	Finalized                       bool
+}
+
+type AggregationsFilter struct {
+	HypertableName string
+	ViewName       string
+	Compressed     domain.OptionFlag
+}
+
+type RefreshConfig struct {
+	Filter *AggregationsFilter
+	Start  time.Time
+	End    time.Time
+	Pace   int16
 }
 
 // representation of a continuous_aggregation

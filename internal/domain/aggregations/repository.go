@@ -17,25 +17,19 @@ type AggregationsRepository interface {
 	Refresh(viewName string, start time.Time, end time.Time) error
 }
 
-type AggregationsFilter struct {
-	HypertableName string
-	ViewName       string
-	Compressed     domain.OptionFlag
-}
-
-type AggregationsRepositoryPg struct {
+type AggregationsRepositoryPgx struct {
 	conn   db.PgxIface
 	logger *slog.Logger
 }
 
 func NewAggregationsRepository(conn db.PgxIface, logger *slog.Logger) AggregationsRepository {
-	return &AggregationsRepositoryPg{
+	return &AggregationsRepositoryPgx{
 		conn:   conn,
 		logger: logger,
 	}
 }
 
-func (r *AggregationsRepositoryPg) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error) {
+func (r *AggregationsRepositoryPgx) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error) {
 	query, args := r.buildQuery(filter)
 
 	rows, err := r.conn.Query(context.Background(), query, args...)
@@ -47,7 +41,7 @@ func (r *AggregationsRepositoryPg) GetAggregations(filter *AggregationsFilter) (
 	return r.parseRows(rows)
 }
 
-func (r *AggregationsRepositoryPg) Refresh(viewName string, start time.Time, end time.Time) error {
+func (r *AggregationsRepositoryPgx) Refresh(viewName string, start time.Time, end time.Time) error {
 	r.logger.Info(
 		fmt.Sprintf(
 			"refreshing %s from %s to %s",
@@ -73,7 +67,7 @@ func (r *AggregationsRepositoryPg) Refresh(viewName string, start time.Time, end
 	return nil
 }
 
-func (r *AggregationsRepositoryPg) buildQuery(filter *AggregationsFilter) (string, []interface{}) {
+func (r *AggregationsRepositoryPgx) buildQuery(filter *AggregationsFilter) (string, []interface{}) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.Select(
 		"hypertable_name",
@@ -100,7 +94,7 @@ func (r *AggregationsRepositoryPg) buildQuery(filter *AggregationsFilter) (strin
 	return sb.Build()
 }
 
-func (r *AggregationsRepositoryPg) parseRows(rows pgx.Rows) ([]ContinuousAggregationInfo, error) {
+func (r *AggregationsRepositoryPgx) parseRows(rows pgx.Rows) ([]ContinuousAggregationInfo, error) {
 	aggregations, err := pgx.CollectRows(
 		rows,
 		pgx.RowToStructByName[ContinuousAggregationInfo],

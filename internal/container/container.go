@@ -12,12 +12,12 @@ import (
 )
 
 type CliContainer struct {
-	conn                   db.PgxIface
-	AggregationsRepository aggregations.AggregationsRepository
-	HypertablesRepository  hypertables.HypertablesRepository
-	Printer                printer.Printer
-	Options                *config.CliOptions
-	ConfigFile             *config.ConfigEnvironment
+	conn                  db.PgxIface
+	AggregationsService   aggregations.AggregationsService
+	HypertablesRepository hypertables.HypertablesRepository
+	Printer               printer.Printer
+	Options               *config.CliOptions
+	ConfigFile            *config.ConfigEnvironment
 }
 
 func NewCliContainer(
@@ -35,7 +35,9 @@ func (c *CliContainer) Connect() {
 	c.conn = db.Connect(confConn)
 
 	// dependencies
-	c.AggregationsRepository = aggregations.NewAggregationsRepository(c.conn, slog.Default().WithGroup("aggregations"))
+	aggregationsRepo := aggregations.NewAggregationsRepository(c.conn, slog.Default().WithGroup("aggregations"))
+	c.AggregationsService = aggregations.NewAggregationsService(aggregationsRepo)
+
 	c.HypertablesRepository = hypertables.NewHypertablesRepository(c.conn, slog.Default().WithGroup("hypertables"))
 }
 

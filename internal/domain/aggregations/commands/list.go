@@ -22,14 +22,13 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 			hypertableName, err := cmd.Flags().GetString("hypertable")
 			exitOnError(err)
 
-			filter := &aggregations.AggregationsFilter{
-				HypertableName: hypertableName,
-				ViewName:       viewName,
-			}
-
-			aggs, err := container.AggregationsRepository.GetAggregations(filter)
+			aggs, err := container.AggregationsService.GetAggregations(
+				&aggregations.AggregationsFilter{
+					ViewName:       viewName,
+					HypertableName: hypertableName,
+				},
+			)
 			exitOnError(err)
-
 			var values []printer.Printable = make([]printer.Printable, len(aggs))
 			for i, agg := range aggs {
 				values[i] = agg
