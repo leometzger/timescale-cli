@@ -33,10 +33,16 @@ func (s *AggregationsServiceImpl) Refresh(conf *RefreshConfig) error {
 
 		for pointer.Before(conf.End) {
 			for _, agg := range aggs {
+				var err error
+
 				if pointer.Add(paceDuration).Before(conf.End) {
-					s.repo.Refresh(agg.ViewName, pointer, pointer.Add(paceDuration))
+					err = s.repo.Refresh(agg.ViewName, pointer, pointer.Add(paceDuration))
 				} else {
-					s.repo.Refresh(agg.ViewName, pointer, conf.End)
+					err = s.repo.Refresh(agg.ViewName, pointer, conf.End)
+				}
+
+				if err != nil {
+					return err
 				}
 			}
 
@@ -44,7 +50,7 @@ func (s *AggregationsServiceImpl) Refresh(conf *RefreshConfig) error {
 		}
 	} else {
 		for _, agg := range aggs {
-			s.repo.Refresh(agg.ViewName, conf.Start, conf.End)
+			return s.repo.Refresh(agg.ViewName, conf.Start, conf.End)
 		}
 	}
 

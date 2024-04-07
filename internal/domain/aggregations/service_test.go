@@ -44,22 +44,20 @@ func TestRefreshContinuousAggregationWithPace(t *testing.T) {
 	end, _ := time.Parse("2006-01-02", "2024-01-20")
 
 	filter := &aggregations.AggregationsFilter{}
-	repo := mocks.NewMockAggregationsRepository(t)
 
+	repo := mocks.NewMockAggregationsRepository(t)
 	repo.On(
 		"Refresh",
 		"testing_aggregation",
 		start,
 		time.Date(2024, time.January, 8, 0, 0, 0, 0, time.UTC),
 	).Return(nil)
-
 	repo.On(
 		"Refresh",
 		"testing_aggregation",
 		time.Date(2024, time.January, 8, 0, 0, 0, 0, time.UTC),
 		time.Date(2024, time.January, 15, 0, 0, 0, 0, time.UTC),
 	).Return(nil)
-
 	repo.On(
 		"Refresh",
 		"testing_aggregation",
