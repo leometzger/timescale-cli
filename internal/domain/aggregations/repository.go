@@ -98,8 +98,7 @@ func (r *AggregationsRepositoryPgx) buildQuery(filter *AggregationsFilter) (stri
 func (r *AggregationsRepositoryPgx) SetMaxTuplesDecompressedPerDmlTransaction(value int32) error {
 	_, err := r.conn.Exec(
 		context.Background(),
-		"SET timescaledb.max_tuples_decompressed_per_dml_transaction = $1",
-		value,
+		fmt.Sprintf("SET timescaledb.max_tuples_decompressed_per_dml_transaction = %d", value),
 	)
 	return err
 }

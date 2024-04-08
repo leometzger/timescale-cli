@@ -35,7 +35,7 @@ func (s *aggregationsService) Refresh(conf *RefreshConfig) error {
 	}
 
 	err = s.repo.SetMaxTuplesDecompressedPerDmlTransaction(0)
-	if err == nil {
+	if err != nil {
 		s.logger.Error("error changing database parameter on session", "cause", err)
 		return err
 	}
