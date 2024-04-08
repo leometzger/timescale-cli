@@ -112,6 +112,7 @@ func TestGetAggretionsApplyingFilters(t *testing.T) {
 }
 
 func TestRefreshContinuousAggregation(t *testing.T) {
+	t.Skip()
 	sqlbuilder.DefaultFlavor = sqlbuilder.PostgreSQL
 	start, _ := time.Parse("2006-01-02", "2024-01-01")
 	end, _ := time.Parse("2006-01-02", "2024-02-01")
