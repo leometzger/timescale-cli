@@ -1,6 +1,7 @@
 package aggregations
 
 import (
+	"log/slog"
 	"time"
 )
 
@@ -9,19 +10,25 @@ type AggregationsService interface {
 	Refresh(conf *RefreshConfig) error
 }
 
-type AggregationsServiceImpl struct {
-	repo AggregationsRepository
+type aggregationsService struct {
+	repo   AggregationsRepository
+	logger *slog.Logger
 }
 
-func NewAggregationsService(repo AggregationsRepository) AggregationsService {
-	return &AggregationsServiceImpl{repo: repo}
+func NewAggregationsService(repo AggregationsRepository, logger *slog.Logger) AggregationsService {
+	return &aggregationsService{
+		repo:   repo,
+		logger: logger,
+	}
 }
 
-func (s *AggregationsServiceImpl) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error) {
+func (s *aggregationsService) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error) {
 	return s.repo.GetAggregations(filter)
 }
 
-func (s *AggregationsServiceImpl) Refresh(conf *RefreshConfig) error {
+// refreshes a continuous aggregation based on configuration
+// of refreshing window
+func (s *aggregationsService) Refresh(conf *RefreshConfig) error {
 	aggs, err := s.repo.GetAggregations(conf.Filter)
 	if err != nil {
 		return err

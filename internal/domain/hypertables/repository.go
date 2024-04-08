@@ -14,19 +14,19 @@ type HypertablesRepository interface {
 	GetHypertables(filter *HypertablesFilter) ([]HypertableInfo, error)
 }
 
-type HypertablesRepositoryPg struct {
+type hypertablesRepository struct {
 	conn   db.PgxIface
 	logger *slog.Logger
 }
 
 func NewHypertablesRepository(conn db.PgxIface, logger *slog.Logger) HypertablesRepository {
-	return &HypertablesRepositoryPg{
+	return &hypertablesRepository{
 		conn:   conn,
 		logger: logger,
 	}
 }
 
-func (r *HypertablesRepositoryPg) GetHypertables(filter *HypertablesFilter) ([]HypertableInfo, error) {
+func (r *hypertablesRepository) GetHypertables(filter *HypertablesFilter) ([]HypertableInfo, error) {
 	query, args := r.buildQuery(filter)
 
 	rows, err := r.conn.Query(context.Background(), query, args...)
@@ -38,7 +38,7 @@ func (r *HypertablesRepositoryPg) GetHypertables(filter *HypertablesFilter) ([]H
 	return r.parseRows(rows)
 }
 
-func (r *HypertablesRepositoryPg) buildQuery(filter *HypertablesFilter) (string, []interface{}) {
+func (r *hypertablesRepository) buildQuery(filter *HypertablesFilter) (string, []interface{}) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.Select(
 		"hypertable_name",
@@ -60,7 +60,7 @@ func (r *HypertablesRepositoryPg) buildQuery(filter *HypertablesFilter) (string,
 	return sb.Build()
 }
 
-func (r *HypertablesRepositoryPg) parseRows(rows pgx.Rows) ([]HypertableInfo, error) {
+func (r *hypertablesRepository) parseRows(rows pgx.Rows) ([]HypertableInfo, error) {
 	hypertables, err := pgx.CollectRows(
 		rows,
 		pgx.RowToStructByName[HypertableInfo],

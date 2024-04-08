@@ -21,7 +21,7 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 
 			filter := hypertables.HypertablesFilter{}
 
-			tables, err := container.HypertablesRepository.GetHypertables(&filter)
+			tables, err := container.HypertableService.GetHypertables(&filter)
 			if err != nil {
 				os.Exit(1)
 			}

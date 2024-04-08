@@ -12,12 +12,12 @@ import (
 )
 
 type CliContainer struct {
-	conn                  db.PgxIface
-	AggregationsService   aggregations.AggregationsService
-	HypertablesRepository hypertables.HypertablesRepository
-	Printer               printer.Printer
-	Options               *config.CliOptions
-	ConfigFile            *config.ConfigEnvironment
+	conn                db.PgxIface
+	AggregationsService aggregations.AggregationsService
+	HypertableService   hypertables.HypertablesService
+	Printer             printer.Printer
+	Options             *config.CliOptions
+	ConfigFile          *config.ConfigEnvironment
 }
 
 func NewCliContainer(
@@ -34,11 +34,15 @@ func (c *CliContainer) Connect() {
 	confConn := db.LoadConnectionInfoWithConfigFile(c.ConfigFile)
 	c.conn = db.Connect(confConn)
 
-	// dependencies
-	aggregationsRepo := aggregations.NewAggregationsRepository(c.conn, slog.Default().WithGroup("aggregations"))
-	c.AggregationsService = aggregations.NewAggregationsService(aggregationsRepo)
+	// dependencies - aggregations
+	aggregationsLogger := slog.Default().WithGroup("aggregations")
+	aggregationsRepo := aggregations.NewAggregationsRepository(c.conn, aggregationsLogger)
+	c.AggregationsService = aggregations.NewAggregationsService(aggregationsRepo, aggregationsLogger)
 
-	c.HypertablesRepository = hypertables.NewHypertablesRepository(c.conn, slog.Default().WithGroup("hypertables"))
+	// dependencies - hypertables
+	hypertablesLogger := slog.Default().WithGroup("hypertables")
+	hypertablesRepo := hypertables.NewHypertablesRepository(c.conn, hypertablesLogger)
+	c.HypertableService = hypertables.NewHypertablesService(hypertablesRepo, hypertablesLogger)
 }
 
 func (c *CliContainer) Close() {
