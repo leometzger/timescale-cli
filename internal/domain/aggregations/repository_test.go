@@ -128,15 +128,15 @@ func TestRefreshContinuousAggregation(t *testing.T) {
 		refreshResponse error
 		expectedError   error
 	}{
-		// {
-		// 	name:            "refreshes aggregation",
-		// 	refreshQuery:    `CALL refresh_continuous_aggregate\('"metrics_by_hour"', '2024-01-01', '2024-02-01'\)`,
-		// 	refreshResponse: nil,
-		// 	expectedError:   nil,
-		// },
 		{
 			name:            "refreshes aggregation",
-			refreshQuery:    `CALL refresh_continuous_aggregate\('"metrics_by_hour"', '2024-01-01', '2024-02-01'\)`,
+			refreshQuery:    "CALL refresh_continuous_aggregate\\('\"metrics_by_hour\"', '2024-01-01', '2024-02-01'\\)",
+			refreshResponse: nil,
+			expectedError:   nil,
+		},
+		{
+			name:            "refreshes aggregation",
+			refreshQuery:    "CALL refresh_continuous_aggregate\\('\"metrics_by_hour\"', '2024-01-01', '2024-02-01'\\)",
 			refreshResponse: errors.New("something bad happened"),
 			expectedError:   errors.New("something bad happened"),
 		},

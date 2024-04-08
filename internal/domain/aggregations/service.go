@@ -34,6 +34,12 @@ func (s *aggregationsService) Refresh(conf *RefreshConfig) error {
 		return err
 	}
 
+	err = s.repo.SetMaxTuplesDecompressedPerDmlTransaction(0)
+	if err == nil {
+		s.logger.Error("error changing database parameter on session", "cause", err)
+		return err
+	}
+
 	if conf.Pace > 0 {
 		pointer := conf.Start
 		paceDuration := time.Duration(24*conf.Pace) * time.Hour

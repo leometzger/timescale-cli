@@ -15,6 +15,7 @@ import (
 type AggregationsRepository interface {
 	GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error)
 	Refresh(viewName string, start time.Time, end time.Time) error
+	SetMaxTuplesDecompressedPerDmlTransaction(value int32) error
 }
 
 type AggregationsRepositoryPgx struct {
@@ -92,6 +93,15 @@ func (r *AggregationsRepositoryPgx) buildQuery(filter *AggregationsFilter) (stri
 	}
 
 	return sb.Build()
+}
+
+func (r *AggregationsRepositoryPgx) SetMaxTuplesDecompressedPerDmlTransaction(value int32) error {
+	_, err := r.conn.Exec(
+		context.Background(),
+		"SET timescaledb.max_tuples_decompressed_per_dml_transaction = $1",
+		value,
+	)
+	return err
 }
 
 func (r *AggregationsRepositoryPgx) parseRows(rows pgx.Rows) ([]ContinuousAggregationInfo, error) {
