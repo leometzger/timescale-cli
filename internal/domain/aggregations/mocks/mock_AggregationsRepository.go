@@ -128,6 +128,52 @@ func (_c *MockAggregationsRepository_Refresh_Call) RunAndReturn(run func(string,
 	return _c
 }
 
+// SetMaxTuplesDecompressedPerDmlTransaction provides a mock function with given fields: value
+func (_m *MockAggregationsRepository) SetMaxTuplesDecompressedPerDmlTransaction(value int32) error {
+	ret := _m.Called(value)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SetMaxTuplesDecompressedPerDmlTransaction")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int32) error); ok {
+		r0 = rf(value)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetMaxTuplesDecompressedPerDmlTransaction'
+type MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call struct {
+	*mock.Call
+}
+
+// SetMaxTuplesDecompressedPerDmlTransaction is a helper method to define mock.On call
+//   - value int32
+func (_e *MockAggregationsRepository_Expecter) SetMaxTuplesDecompressedPerDmlTransaction(value interface{}) *MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call {
+	return &MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call{Call: _e.mock.On("SetMaxTuplesDecompressedPerDmlTransaction", value)}
+}
+
+func (_c *MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call) Run(run func(value int32)) *MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(int32))
+	})
+	return _c
+}
+
+func (_c *MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call) Return(_a0 error) *MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call) RunAndReturn(run func(int32) error) *MockAggregationsRepository_SetMaxTuplesDecompressedPerDmlTransaction_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockAggregationsRepository creates a new instance of MockAggregationsRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockAggregationsRepository(t interface {

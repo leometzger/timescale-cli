@@ -18,6 +18,7 @@ func TestRefreshContinuousAggregationWithoutPace(t *testing.T) {
 	filter := &aggregations.AggregationsFilter{}
 	repo := mocks.NewMockAggregationsRepository(t)
 	repo.On("Refresh", "testing_aggregation", start, end).Return(nil)
+	repo.On("SetMaxTuplesDecompressedPerDmlTransaction", int32(0)).Return(nil)
 	repo.On("GetAggregations", filter).Return([]aggregations.ContinuousAggregationInfo{
 		{
 			HypertableName:     "metrics",
@@ -68,7 +69,7 @@ func TestRefreshContinuousAggregationWithPace(t *testing.T) {
 		time.Date(2024, time.January, 15, 0, 0, 0, 0, time.UTC),
 		time.Date(2024, time.January, 20, 0, 0, 0, 0, time.UTC),
 	).Return(nil)
-
+	repo.On("SetMaxTuplesDecompressedPerDmlTransaction", int32(0)).Return(nil)
 	repo.On("GetAggregations", filter).Return([]aggregations.ContinuousAggregationInfo{
 		{
 			HypertableName:     "metrics",
@@ -101,6 +102,7 @@ func TestRaiseErrorWhenPaceIsSetted(t *testing.T) {
 	filter := &aggregations.AggregationsFilter{}
 
 	repo := mocks.NewMockAggregationsRepository(t)
+	repo.On("SetMaxTuplesDecompressedPerDmlTransaction", int32(0)).Return(nil)
 	repo.On(
 		"Refresh",
 		"testing_aggregation",

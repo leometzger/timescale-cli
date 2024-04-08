@@ -63,7 +63,10 @@ func (s *aggregationsService) Refresh(conf *RefreshConfig) error {
 		}
 	} else {
 		for _, agg := range aggs {
-			return s.repo.Refresh(agg.ViewName, conf.Start, conf.End)
+			err := s.repo.Refresh(agg.ViewName, conf.Start, conf.End)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
