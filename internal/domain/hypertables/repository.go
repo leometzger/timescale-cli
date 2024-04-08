@@ -48,7 +48,7 @@ func (r *hypertablesRepository) buildQuery(filter *HypertablesFilter) (string, [
 	).From("timescaledb_information.hypertables")
 
 	if filter.Name != "" {
-		sb.Where("hypertable_name LIKE ?", filter.Name)
+		sb.Where(sb.Like("hypertable_name", filter.Name))
 	}
 
 	if filter.Compressed == domain.OptionFlagTrue {
