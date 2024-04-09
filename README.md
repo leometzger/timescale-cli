@@ -4,13 +4,15 @@
 
 # TimescaleDB CLI
 
-TimescaleDB CLI is a unofficcial command-line tool for running some manual processes into TimescaleDB instances.
+TimescaleDB CLI is a command-line tool designed to simplify some operations within TimescaleDB instances.
+This unofficial tool is built to make the developers life easier. It does that by providing a terminal-based
+interface for common operations and automation tasks.
 
 ## Usage
 
-This is how I imagine the things running.
+It is pretty simple to use it.
 
-### Config
+### Configuring
 
 Add the configuration to the config file
 
@@ -18,7 +20,7 @@ Add the configuration to the config file
 tsctl config create --env staging --host db.timescale.staging --database tsdb
 ```
 
-List configurated environments (TODO
+List configurated environments (TODO)
 
 ```sh
 tsctl config ls

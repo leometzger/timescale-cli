@@ -24,8 +24,7 @@ func main() {
 	root := &cobra.Command{}
 
 	cobra.OnInitialize(onInitialize(root, container))
-
-	root.PersistentFlags().StringP("env", "e", "default", "Environment of config to use")
+	root.PersistentFlags().StringP("env", "e", "", "Environment of config to use")
 
 	root.AddCommand(configCmd.NewConfigCommand(container))
 	root.AddCommand(aggregation.NewAggregationCommand(container))
@@ -45,8 +44,7 @@ func onInitialize(root *cobra.Command, container *container.CliContainer) func()
 
 		configFile, err := config.LoadConfig(config.GetDefaultConfigPath(), env)
 		if err != nil {
-			slog.Error(err.Error())
-			os.Exit(1)
+			configFile = config.DefaultConfig()
 		}
 
 		container.Options.Env = env

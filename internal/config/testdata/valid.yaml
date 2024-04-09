@@ -11,3 +11,4 @@ staging:
   database: datawarehouse-s
   password: password-s
   port: 5434
+  default: true
