@@ -12,8 +12,9 @@ import (
 
 func newAddConfigCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "add",
+		Use:     "add [env]",
 		Aliases: []string{},
+		Args:    cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := slog.Default()
 
@@ -23,11 +24,11 @@ func newAddConfigCommand(container *container.CliContainer) *cobra.Command {
 				os.Exit(1)
 			}
 
-			env, err := cmd.Flags().GetString("env")
-			if err != nil {
-				logger.Error("could not identify environment to create", "cause", err)
+			if len(args) == 0 {
+				logger.Error("could not identify environment to create")
 				os.Exit(1)
 			}
+			env := args[0]
 
 			host, err := cmd.Flags().GetString("host")
 			if err != nil {

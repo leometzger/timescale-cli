@@ -41,6 +41,30 @@ func AddConfig(envName string, env *ConfigEnvironment, configPath string) error 
 	return nil
 }
 
+func RemoveConfig(envName string, configPath string) error {
+	conf, err := loadConfig(configPath)
+	if err != nil {
+		return err
+	}
+
+	if conf[envName] == nil {
+		return fmt.Errorf("could not find environment \"%v\"", envName)
+	}
+
+	delete(conf, envName)
+	data, err := yaml.Marshal(conf)
+	if err != nil {
+		return fmt.Errorf("error converting the default configuration to YAML: %v", err)
+	}
+
+	err = os.WriteFile(configPath, data, 0644)
+	if err != nil {
+		return fmt.Errorf("error while writing the config: %v", err)
+	}
+
+	return nil
+}
+
 func createConfigFile(configPath string) error {
 	err := os.MkdirAll(path.Dir(configPath), 0666)
 	if err != nil {

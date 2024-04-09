@@ -17,6 +17,7 @@ func NewConfigCommand(container *container.CliContainer) *cobra.Command {
 	cmd.AddCommand(newCheckConfigCommand(container))
 	cmd.AddCommand(newAddConfigCommand(container))
 	cmd.AddCommand(newListConfigsCommand(container))
+	cmd.AddCommand(newRemoveConfigCommand(container))
 
 	return cmd
 }
