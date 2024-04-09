@@ -63,6 +63,12 @@ func newAddConfigCommand(container *container.CliContainer) *cobra.Command {
 				os.Exit(1)
 			}
 
+			defaultConfig, err := cmd.Flags().GetBool("default")
+			if err != nil {
+				logger.Error("could not load default")
+				os.Exit(1)
+			}
+
 			fullPath := path.Join(home, ".tsctl", config.DefaultConfigFileName)
 			err = config.AddConfig(env, &config.ConfigEnvironment{
 				Host:     host,
@@ -70,6 +76,7 @@ func newAddConfigCommand(container *container.CliContainer) *cobra.Command {
 				Database: database,
 				User:     user,
 				Password: password,
+				Default:  defaultConfig,
 			}, fullPath)
 			exitOnError(err)
 
@@ -79,6 +86,7 @@ func newAddConfigCommand(container *container.CliContainer) *cobra.Command {
 
 	defaultConfig := config.DefaultConfig()
 
+	cmd.Flags().BoolP("default", "", false, "")
 	cmd.Flags().StringP("host", "", defaultConfig.Host, "")
 	cmd.Flags().Uint16P("port", "", 5432, "")
 	cmd.Flags().StringP("database", "", defaultConfig.Database, "")
