@@ -12,8 +12,9 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"ls"},
-		Short:   "",
-		Long:    "",
+		Short:   "Lists all hypertables from an environment",
+		Long:    "Lists all hypertables from an environment",
+		Example: "tsctl hypertable ls --env prod",
 		Args:    cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			container.Connect()

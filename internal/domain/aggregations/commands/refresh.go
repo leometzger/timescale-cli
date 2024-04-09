@@ -13,9 +13,10 @@ func newRefreshCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "refresh",
 		Aliases: []string{},
-		Short:   "refreshes continuous aggregations that match the filter",
-		Long:    "",
+		Short:   "Refreshes continuous aggregations that match the filter",
+		Long:    "Refreshes continuous aggregations that match the filter",
 		Args:    cobra.ExactArgs(0),
+		Example: `tsctl aggregation refresh --view %daily --hypertable metrics --pace 7 --env prod`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			container.Connect()
 

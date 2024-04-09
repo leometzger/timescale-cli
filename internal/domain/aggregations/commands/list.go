@@ -14,6 +14,7 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 		Aliases: []string{"list"},
 		Short:   "List all continuous aggregations from Timescale",
 		Long:    `List all continuous aggregations from Timescale given a selected environment to execute the commands.`,
+		Example: "tsctl hypertable ls --env prod",
 		Run: func(cmd *cobra.Command, args []string) {
 			container.Connect()
 

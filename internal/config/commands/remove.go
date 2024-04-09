@@ -15,6 +15,9 @@ func newRemoveConfigCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "remove [env]",
 		Aliases: []string{"rm"},
+		Short:   "Removes a configuration from config file",
+		Long:    "Removes a configuration from config file",
+		Example: "tsctl remove dev",
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := slog.Default()
 
