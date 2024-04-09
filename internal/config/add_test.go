@@ -58,7 +58,7 @@ func TestCreateNewConfigSucessfully(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		err = config.CreateConfig(test.EnvName, &config.ConfigEnvironment{
+		err = config.AddConfig(test.EnvName, &config.ConfigEnvironment{
 			Host:     test.Env.Host,
 			Database: test.Env.Database,
 			Port:     test.Env.Port,

@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newCreateConfigCommand(container *container.CliContainer) *cobra.Command {
+func newAddConfigCommand(container *container.CliContainer) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create",
+		Use:     "add",
 		Aliases: []string{},
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := slog.Default()
@@ -60,7 +60,7 @@ func newCreateConfigCommand(container *container.CliContainer) *cobra.Command {
 			}
 
 			fullPath := path.Join(home, ".tsctl", config.DefaultConfigFileName)
-			err = config.CreateConfig(env, &config.ConfigEnvironment{
+			err = config.AddConfig(env, &config.ConfigEnvironment{
 				Host:     host,
 				Port:     port,
 				Database: database,

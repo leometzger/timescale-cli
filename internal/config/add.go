@@ -13,7 +13,7 @@ import (
 const DefaultConfigFileName = "config.yaml"
 
 // creates a config into default file
-func CreateConfig(envName string, env *ConfigEnvironment, configPath string) error {
+func AddConfig(envName string, env *ConfigEnvironment, configPath string) error {
 	conf, _ := loadConfig(configPath)
 	if conf == nil {
 		slog.Info("could not find config, creating a new one")
