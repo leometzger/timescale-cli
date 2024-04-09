@@ -14,13 +14,13 @@ It is pretty simple to use it.
 
 ### Configuring
 
-Add the configuration to the config file
+Add the configuration to the config file pointing to your DB instances
 
 ```sh
-tsctl config create --env staging --host db.timescale.staging --database tsdb
+tsctl config add staging --host db.timescale.staging --database tsdb --port 5433 --password pass --user postgres
 ```
 
-List configurated environments (TODO)
+List configurated environments
 
 ```sh
 tsctl config ls
@@ -30,6 +30,12 @@ Check if the configuration is valid and connect the database
 
 ```sh
 tsctl config check
+```
+
+Remove configured environment
+
+```sh
+tsctl config rm staging
 ```
 
 ### Aggregation
@@ -51,9 +57,15 @@ Refreshes hypertables from start to end using filters for view or hypertable.
 ```sh
 tsctl aggregation refresh --env staging --start 2023-01-01 --end 2023-02-01
 
+# Refreshes all continuous aggregations from hypertable metrics from 2023-01-01 to 2023-02-01
 tsctl aggregation refresh --start 2023-01-01 --end 2023-02-01 --hypertable metrics
 
+# Refreshes all continuous aggregations ending with hourly from 2023-01-01 to 2023-02-01
 tsctl aggregation refresh --start 2023-01-01 --end 2023-02-01 --view-name %hourly
+
+# Refreshes all continuous aggregations ending with hourly from 2023-01-01 to 2023-02-01
+# incrementing 7 days each call
+tsctl aggregation refresh --start 2023-01-01 --end 2023-02-01 --view-name %hourly --pace 7
 ```
 
 ### Hypertable
