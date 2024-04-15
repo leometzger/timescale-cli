@@ -2,6 +2,7 @@ package aggregations
 
 import (
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/leometzger/timescale-cli/internal/domain"
@@ -29,11 +30,38 @@ type AggregationsFilter struct {
 	Compressed     domain.OptionFlag
 }
 
+func (f AggregationsFilter) String() string {
+	sb := strings.Builder{}
+	if f.HypertableName != "" {
+		sb.WriteString("hypertable_name=")
+		sb.WriteString(f.HypertableName)
+		sb.WriteString(" ")
+	}
+
+	if f.ViewName != "" {
+		sb.WriteString("view_name=\"")
+		sb.WriteString(f.ViewName)
+		sb.WriteString("\" ")
+	}
+
+	if f.Compressed == domain.OptionFlagTrue {
+		sb.WriteString("compressed=true ")
+	}
+
+	return sb.String()
+}
+
 type RefreshConfig struct {
 	Filter *AggregationsFilter
 	Start  time.Time
 	End    time.Time
 	Pace   int16
+}
+
+type CompressConfig struct {
+	Filter    *AggregationsFilter
+	OlderThan *time.Time
+	NewerThan *time.Time
 }
 
 // representation of a continuous_aggregation

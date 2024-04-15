@@ -20,6 +20,52 @@ func (_m *MockAggregationsService) EXPECT() *MockAggregationsService_Expecter {
 	return &MockAggregationsService_Expecter{mock: &_m.Mock}
 }
 
+// Compress provides a mock function with given fields: conf
+func (_m *MockAggregationsService) Compress(conf *aggregations.CompressConfig) error {
+	ret := _m.Called(conf)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Compress")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*aggregations.CompressConfig) error); ok {
+		r0 = rf(conf)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockAggregationsService_Compress_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Compress'
+type MockAggregationsService_Compress_Call struct {
+	*mock.Call
+}
+
+// Compress is a helper method to define mock.On call
+//   - conf *aggregations.CompressConfig
+func (_e *MockAggregationsService_Expecter) Compress(conf interface{}) *MockAggregationsService_Compress_Call {
+	return &MockAggregationsService_Compress_Call{Call: _e.mock.On("Compress", conf)}
+}
+
+func (_c *MockAggregationsService_Compress_Call) Run(run func(conf *aggregations.CompressConfig)) *MockAggregationsService_Compress_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(*aggregations.CompressConfig))
+	})
+	return _c
+}
+
+func (_c *MockAggregationsService_Compress_Call) Return(_a0 error) *MockAggregationsService_Compress_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockAggregationsService_Compress_Call) RunAndReturn(run func(*aggregations.CompressConfig) error) *MockAggregationsService_Compress_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetAggregations provides a mock function with given fields: filter
 func (_m *MockAggregationsService) GetAggregations(filter *aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregationInfo, error) {
 	ret := _m.Called(filter)

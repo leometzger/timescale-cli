@@ -22,6 +22,54 @@ func (_m *MockAggregationsRepository) EXPECT() *MockAggregationsRepository_Expec
 	return &MockAggregationsRepository_Expecter{mock: &_m.Mock}
 }
 
+// Compress provides a mock function with given fields: viewName, olderThan, newerThan
+func (_m *MockAggregationsRepository) Compress(viewName string, olderThan *time.Time, newerThan *time.Time) error {
+	ret := _m.Called(viewName, olderThan, newerThan)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Compress")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, *time.Time, *time.Time) error); ok {
+		r0 = rf(viewName, olderThan, newerThan)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockAggregationsRepository_Compress_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Compress'
+type MockAggregationsRepository_Compress_Call struct {
+	*mock.Call
+}
+
+// Compress is a helper method to define mock.On call
+//   - viewName string
+//   - olderThan *time.Time
+//   - newerThan *time.Time
+func (_e *MockAggregationsRepository_Expecter) Compress(viewName interface{}, olderThan interface{}, newerThan interface{}) *MockAggregationsRepository_Compress_Call {
+	return &MockAggregationsRepository_Compress_Call{Call: _e.mock.On("Compress", viewName, olderThan, newerThan)}
+}
+
+func (_c *MockAggregationsRepository_Compress_Call) Run(run func(viewName string, olderThan *time.Time, newerThan *time.Time)) *MockAggregationsRepository_Compress_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(*time.Time), args[2].(*time.Time))
+	})
+	return _c
+}
+
+func (_c *MockAggregationsRepository_Compress_Call) Return(_a0 error) *MockAggregationsRepository_Compress_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockAggregationsRepository_Compress_Call) RunAndReturn(run func(string, *time.Time, *time.Time) error) *MockAggregationsRepository_Compress_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetAggregations provides a mock function with given fields: filter
 func (_m *MockAggregationsRepository) GetAggregations(filter *aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregationInfo, error) {
 	ret := _m.Called(filter)

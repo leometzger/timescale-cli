@@ -151,3 +151,5 @@ func TestRefreshContinuousAggregation(t *testing.T) {
 		assert.Equal(t, test.expectedError, err)
 	}
 }
+
+func TestCompressContinuousAggregation(t *testing.T) {}
