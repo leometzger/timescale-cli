@@ -34,6 +34,11 @@ changelog:
       - "^docs:"
       - "^test:"
 
+dockers:
+  - use: docker
+  - image_templates:
+      - leometzger1/tsctl
+
 nfpms:
   - file_name_template: "{{ .ConventionalFileName }}"
     description: CLI to operate timescale instances through CLI
