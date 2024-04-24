@@ -20,7 +20,6 @@ type ContinuousAggregation struct {
 	CompressionEnabled              bool
 	MaterializationHypertableSchema string
 	MaterializationHypertableName   string
-	ViewDefinition                  string
 	Finalized                       bool
 }
 
@@ -28,6 +27,19 @@ type AggregationsFilter struct {
 	HypertableName string
 	ViewName       string
 	Compressed     domain.OptionFlag
+}
+
+type RefreshConfig struct {
+	Filter *AggregationsFilter
+	Start  time.Time
+	End    time.Time
+	Pace   int16
+}
+
+type CompressConfig struct {
+	Filter    *AggregationsFilter
+	OlderThan *time.Time
+	NewerThan *time.Time
 }
 
 func (f AggregationsFilter) String() string {
@@ -51,34 +63,11 @@ func (f AggregationsFilter) String() string {
 	return sb.String()
 }
 
-type RefreshConfig struct {
-	Filter *AggregationsFilter
-	Start  time.Time
-	End    time.Time
-	Pace   int16
-}
-
-type CompressConfig struct {
-	Filter    *AggregationsFilter
-	OlderThan *time.Time
-	NewerThan *time.Time
-}
-
-// representation of a continuous_aggregation
-// with just the important fields
-type ContinuousAggregationInfo struct {
-	HypertableName     string
-	ViewName           string
-	MaterializedOnly   bool
-	CompressionEnabled bool
-	Finalized          bool
-}
-
-func (c ContinuousAggregationInfo) Headers() []string {
+func (c ContinuousAggregation) Headers() []string {
 	return []string{"HYPERTABLE_NAME", "VIEW_NAME", "MATERIALIZED_ONLY", "COMPRESSION_ENABLED", "FINALIZED"}
 }
 
-func (c ContinuousAggregationInfo) Values() []string {
+func (c ContinuousAggregation) Values() []string {
 	return []string{
 		c.HypertableName,
 		c.ViewName,

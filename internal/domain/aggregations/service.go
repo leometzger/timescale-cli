@@ -7,7 +7,7 @@ import (
 )
 
 type AggregationsService interface {
-	GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error)
+	GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregation, error)
 	Refresh(conf *RefreshConfig) error
 	Compress(conf *CompressConfig) error
 }
@@ -24,7 +24,7 @@ func NewAggregationsService(repo AggregationsRepository, logger *slog.Logger) Ag
 	}
 }
 
-func (s *aggregationsService) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error) {
+func (s *aggregationsService) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregation, error) {
 	return s.repo.GetAggregations(filter)
 }
 

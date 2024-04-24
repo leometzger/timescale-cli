@@ -13,7 +13,7 @@ import (
 )
 
 type AggregationsRepository interface {
-	GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error)
+	GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregation, error)
 	Refresh(viewName string, start time.Time, end time.Time) error
 	Compress(viewName string, olderThan *time.Time, newerThan *time.Time) error
 	SetMaxTuplesDecompressedPerDmlTransaction(value int32) error
@@ -31,7 +31,7 @@ func NewAggregationsRepository(conn db.PgxIface, logger *slog.Logger) Aggregatio
 	}
 }
 
-func (r *aggregationsRepository) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregationInfo, error) {
+func (r *aggregationsRepository) GetAggregations(filter *AggregationsFilter) ([]ContinuousAggregation, error) {
 	query, args := r.buildQuery(filter)
 
 	rows, err := r.conn.Query(context.Background(), query, args...)
@@ -135,9 +135,14 @@ func (r *aggregationsRepository) Compress(viewName string, olderThan *time.Time,
 func (r *aggregationsRepository) buildQuery(filter *AggregationsFilter) (string, []interface{}) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.Select(
+		"hypertable_schema",
 		"hypertable_name",
+		"view_schema",
 		"view_name",
+		"view_owner",
 		"materialized_only",
+		"materialization_hypertable_schema",
+		"materialization_hypertable_name",
 		"compression_enabled",
 		"finalized",
 	).From("timescaledb_information.continuous_aggregates")
@@ -171,10 +176,10 @@ func (r *aggregationsRepository) SetMaxTuplesDecompressedPerDmlTransaction(value
 	return err
 }
 
-func (r *aggregationsRepository) parseRows(rows pgx.Rows) ([]ContinuousAggregationInfo, error) {
+func (r *aggregationsRepository) parseRows(rows pgx.Rows) ([]ContinuousAggregation, error) {
 	aggregations, err := pgx.CollectRows(
 		rows,
-		pgx.RowToStructByName[ContinuousAggregationInfo],
+		pgx.RowToStructByName[ContinuousAggregation],
 	)
 	if err != nil {
 		r.logger.Error("error parsing aggregations query", "cause", err)

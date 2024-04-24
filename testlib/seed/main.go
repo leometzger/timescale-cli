@@ -106,7 +106,21 @@ func createContinuousAggregations(conn db.PgxIface) {
 		GROUP BY 1, type_id;
 	`)
 	if err != nil {
-		slog.Error("error creating continuous aggregates for testing porpose", "cause", err)
+		slog.Error("error creating monthly hierarquical continuous aggregates for testing porpose", "cause", err)
+		os.Exit(1)
+	}
+
+	_, err = conn.Exec(context.Background(), `
+		CREATE MATERIALIZED VIEW metrics_by_year WITH (timescaledb.continuous)
+		SELECT time_bucket('1 year'::interval, metrics_by_month.bucket) AS bucket,
+			metrics_by_month.type_id,
+			count(*) AS count,
+			sum(metrics_by_month.sum) AS sum
+		FROM metrics_by_month
+		GROUP BY (time_bucket('1 year'::interval, metrics_by_month.bucket)), metrics_by_month.type_id;
+	`)
+	if err != nil {
+		slog.Error("error creating yearly hierarquical continuous aggregates for testing porpose", "cause", err)
 		os.Exit(1)
 	}
 }

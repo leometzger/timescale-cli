@@ -29,7 +29,7 @@ func newListCommand(container *container.CliContainer) *cobra.Command {
 				values[i] = agg
 			}
 
-			container.Printer.Print(aggregations.ContinuousAggregationInfo{}, values)
+			container.Printer.Print(aggregations.ContinuousAggregation{}, values)
 		},
 	}
 

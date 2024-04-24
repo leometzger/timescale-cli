@@ -67,23 +67,23 @@ func (_c *MockAggregationsService_Compress_Call) RunAndReturn(run func(*aggregat
 }
 
 // GetAggregations provides a mock function with given fields: filter
-func (_m *MockAggregationsService) GetAggregations(filter *aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregationInfo, error) {
+func (_m *MockAggregationsService) GetAggregations(filter *aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregation, error) {
 	ret := _m.Called(filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAggregations")
 	}
 
-	var r0 []aggregations.ContinuousAggregationInfo
+	var r0 []aggregations.ContinuousAggregation
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregationInfo, error)); ok {
+	if rf, ok := ret.Get(0).(func(*aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregation, error)); ok {
 		return rf(filter)
 	}
-	if rf, ok := ret.Get(0).(func(*aggregations.AggregationsFilter) []aggregations.ContinuousAggregationInfo); ok {
+	if rf, ok := ret.Get(0).(func(*aggregations.AggregationsFilter) []aggregations.ContinuousAggregation); ok {
 		r0 = rf(filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]aggregations.ContinuousAggregationInfo)
+			r0 = ret.Get(0).([]aggregations.ContinuousAggregation)
 		}
 	}
 
@@ -114,12 +114,12 @@ func (_c *MockAggregationsService_GetAggregations_Call) Run(run func(filter *agg
 	return _c
 }
 
-func (_c *MockAggregationsService_GetAggregations_Call) Return(_a0 []aggregations.ContinuousAggregationInfo, _a1 error) *MockAggregationsService_GetAggregations_Call {
+func (_c *MockAggregationsService_GetAggregations_Call) Return(_a0 []aggregations.ContinuousAggregation, _a1 error) *MockAggregationsService_GetAggregations_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockAggregationsService_GetAggregations_Call) RunAndReturn(run func(*aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregationInfo, error)) *MockAggregationsService_GetAggregations_Call {
+func (_c *MockAggregationsService_GetAggregations_Call) RunAndReturn(run func(*aggregations.AggregationsFilter) ([]aggregations.ContinuousAggregation, error)) *MockAggregationsService_GetAggregations_Call {
 	_c.Call.Return(run)
 	return _c
 }
