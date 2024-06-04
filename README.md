@@ -17,25 +17,25 @@ It is pretty simple to use it.
 Add the configuration to the config file pointing to your DB instances
 
 ```sh
-tsctl config add staging --host db.timescale.staging --database tsdb --port 5433 --password pass --user postgres
+timescale config add staging --host db.timescale.staging --database tsdb --port 5433 --password pass --user postgres
 ```
 
 List configurated environments
 
 ```sh
-tsctl config ls
+timescale config ls
 ```
 
 Check if the configuration is valid and connect the database
 
 ```sh
-tsctl config check
+timescale config check
 ```
 
 Remove configured environment
 
 ```sh
-tsctl config rm staging
+timescale config rm staging
 ```
 
 ### Aggregation
@@ -43,29 +43,29 @@ tsctl config rm staging
 List aggregations from specified timescale instance
 
 ```sh
-tsctl aggregation ls
+timescale aggregation ls
 
-tsctl aggregation ls --hypertable metrics
+timescale aggregation ls --hypertable metrics
 
-tsctl aggregation ls --view-name %hourly
+timescale aggregation ls --view-name %hourly
 
-tsctl aggregation ls --hypertable metrics --view-name %hourly
+timescale aggregation ls --hypertable metrics --view-name %hourly
 ```
 
 Refreshes hypertables from start to end using filters for view or hypertable.
 
 ```sh
-tsctl aggregation refresh --env staging --start 2023-01-01 --end 2023-02-01
+timescale aggregation refresh --env staging --start 2023-01-01 --end 2023-02-01
 
 # Refreshes all continuous aggregations from hypertable metrics from 2023-01-01 to 2023-02-01
-tsctl aggregation refresh --start 2023-01-01 --end 2023-02-01 --hypertable metrics
+timescale aggregation refresh --start 2023-01-01 --end 2023-02-01 --hypertable metrics
 
 # Refreshes all continuous aggregations ending with hourly from 2023-01-01 to 2023-02-01
-tsctl aggregation refresh --start 2023-01-01 --end 2023-02-01 --view-name %hourly
+timescale aggregation refresh --start 2023-01-01 --end 2023-02-01 --view-name %hourly
 
 # Refreshes all continuous aggregations ending with hourly from 2023-01-01 to 2023-02-01
 # incrementing 7 days each call
-tsctl aggregation refresh --start 2023-01-01 --end 2023-02-01 --view-name %hourly --pace 7
+timescale aggregation refresh --start 2023-01-01 --end 2023-02-01 --view-name %hourly --pace 7
 ```
 
 ### Hypertable
@@ -73,21 +73,21 @@ tsctl aggregation refresh --start 2023-01-01 --end 2023-02-01 --view-name %hourl
 List the hypertables, giving the main information about it.
 
 ```sh
-tsctl hypertable ls
+timescale hypertable ls
 
-tsctl hypertable ls --name %hourly
+timescale hypertable ls --name %hourly
 ```
 
 Compress chunks manually from a start to end. (TODO)
 
 ```sh
-tsctl hypertable compress --from 2023-01-01 --to 2024-01-01
+timescale hypertable compress --from 2023-01-01 --to 2024-01-01
 
-tsctl hypertable compress --name %_metrics --from 2023-01-01 --to 2024-01-01
+timescale hypertable compress --name %_metrics --from 2023-01-01 --to 2024-01-01
 ```
 
 Give detailed information about the hypertable, like how many chunks it has. (TODO)
 
 ```sh
-tsctl hypertable inspect metrics
+timescale hypertable inspect metrics
 ```

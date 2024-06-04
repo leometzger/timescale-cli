@@ -9,7 +9,7 @@ builds:
     goos:
       - linux
       - darwin
-    binary: tsctl
+    binary: timescale
 
 archives:
   - format: tar.gz
