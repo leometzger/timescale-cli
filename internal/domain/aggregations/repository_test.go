@@ -64,9 +64,9 @@ func TestIntegrationShouldGetAggregationsByViewNameUsingLikeExpressions(t *testi
 
 	aggs, err := repo.GetAggregations(&filter)
 
-	assert.Nil(t, err)
-	assert.NotNil(t, aggs)
-	assert.Equal(t, 1, len(aggs))
+	require.Nil(t, err)
+	require.NotNil(t, aggs)
+	require.Equal(t, 1, len(aggs))
 }
 
 func TestIntegrationGetAggregationsReturnEmptyList(t *testing.T) {
@@ -77,9 +77,23 @@ func TestIntegrationGetAggregationsReturnEmptyList(t *testing.T) {
 
 	aggs, err := repo.GetAggregations(&filter)
 
-	assert.Nil(t, err, "should return empty list instead of error when there is no aggregations with view")
-	assert.NotNil(t, aggs)
-	assert.Equal(t, 0, len(aggs))
+	require.Nil(t, err, "should return empty list instead of error when there is no aggregations with view")
+	require.NotNil(t, aggs)
+	require.Equal(t, 0, len(aggs))
+}
+
+func TestIntegrationShouldGetHierarquicalAggregations(t *testing.T) {
+	conn := testlib.GetConnection()
+	defer conn.Close(context.Background())
+	repo := NewAggregationsRepository(conn, slog.Default())
+	filter := AggregationsFilter{HypertableName: "metrics_by_hour"}
+
+	aggs, err := repo.GetAggregations(&filter)
+
+	require.Nil(t, err, "should return nil")
+	require.NotNil(t, aggs)
+	require.Equal(t, 1, len(aggs))
+	assert.Equal(t, aggs[0].HypertableName, "metrics_by_hour")
 }
 
 func TestIntegrationShouldBeAbleToRefreshAContinuousAggregation(t *testing.T) {
@@ -91,9 +105,5 @@ func TestIntegrationShouldBeAbleToRefreshAContinuousAggregation(t *testing.T) {
 
 	err := repo.Refresh("metrics_by_day", start, end)
 
-	assert.Nil(t, err)
-}
-
-func TestIntegrationShouldGetHierarquicalAggregations(t *testing.T) {
-
+	require.Nil(t, err)
 }

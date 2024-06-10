@@ -124,48 +124,42 @@ func (r *aggregationsRepository) Compress(viewName string, olderThan *time.Time,
 	return nil
 }
 
-// func formatSafe(date *time.Time) string {
-// 	if date == nil {
-// 		return nil
-// 	}
-//
-// 	return date.Format("2006-01-02")
-// }
-
 func (r *aggregationsRepository) buildQuery(filter *AggregationsFilter) (string, []interface{}) {
 	sb := sqlbuilder.NewSelectBuilder()
 	sb.Select(
-		"hypertable_schema",
-		"hypertable_name",
-		"view_schema",
-		"view_name",
-		"view_owner",
-		"materialized_only",
-		"materialization_hypertable_schema",
-		"materialization_hypertable_name",
-		"compression_enabled",
-		"finalized",
-	).From("timescaledb_information.continuous_aggregates")
+		"ca.hypertable_schema",
+		"coalesce(cats.view_name, ca.hypertable_name) as hypertable_name",
+		"ca.view_schema",
+		"ca.view_name",
+		"ca.view_owner",
+		"ca.materialized_only",
+		"ca.materialization_hypertable_schema",
+		"ca.materialization_hypertable_name",
+		"ca.compression_enabled",
+		"ca.finalized",
+	).
+		From("timescaledb_information.continuous_aggregates ca").
+		JoinWithOption(
+			sqlbuilder.LeftJoin,
+			"timescaledb_information.continuous_aggregates cats",
+			"ca.hypertable_name = cats.materialization_hypertable_name",
+		)
 
 	if filter.HypertableName != "" {
-		sb.Where(sb.Equal("hypertable_name", filter.HypertableName))
+		sb.Where(sb.Equal("coalesce(cats.view_name, ca.hypertable_name)", filter.HypertableName))
 	}
 
 	if filter.ViewName != "" {
-		sb.Where(sb.Like("view_name", filter.ViewName))
+		sb.Where(sb.Like("ca.view_name", filter.ViewName))
 	}
 
 	if filter.Compressed == domain.OptionFlagTrue {
-		sb.Where("compression_enabled = true")
+		sb.Where("ca.compression_enabled = true")
 	} else if filter.Compressed == domain.OptionFlagFalse {
-		sb.Where("compression_enabled = false")
+		sb.Where("ca.compression_enabled = false")
 	}
 
 	return sb.Build()
-}
-
-func (r *aggregationsRepository) buildQueryHierarquical(filter *AggregationsFilter) (string, []interface{}) {
-	return "", nil
 }
 
 func (r *aggregationsRepository) SetMaxTuplesDecompressedPerDmlTransaction(value int32) error {

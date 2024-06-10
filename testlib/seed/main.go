@@ -111,7 +111,7 @@ func createContinuousAggregations(conn db.PgxIface) {
 	}
 
 	_, err = conn.Exec(context.Background(), `
-		CREATE MATERIALIZED VIEW metrics_by_year WITH (timescaledb.continuous)
+		CREATE MATERIALIZED VIEW metrics_by_year WITH (timescaledb.continuous) as
 		SELECT time_bucket('1 year'::interval, metrics_by_month.bucket) AS bucket,
 			metrics_by_month.type_id,
 			count(*) AS count,
