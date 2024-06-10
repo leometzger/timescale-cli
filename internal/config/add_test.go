@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/leometzger/timescale-cli/internal/config"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -66,17 +65,17 @@ func TestCreateNewConfigSucessfully(t *testing.T) {
 			Password: test.Env.Password,
 		}, configPath)
 
-		assert.Nil(t, err)
-		assert.FileExists(t, path.Join(tmp, config.DefaultConfigFileName))
+		require.Nil(t, err)
+		require.FileExists(t, path.Join(tmp, config.DefaultConfigFileName))
 	}
 
 	for _, test := range tests {
 		env, err := config.LoadConfig(configPath, test.EnvName)
 
 		require.Nil(t, err)
-		assert.Equal(t, test.Env.Database, env.Database)
-		assert.Equal(t, test.Env.Port, env.Port)
-		assert.Equal(t, test.Env.User, env.User)
-		assert.Equal(t, test.Env.Password, env.Password)
+		require.Equal(t, test.Env.Database, env.Database)
+		require.Equal(t, test.Env.Port, env.Port)
+		require.Equal(t, test.Env.User, env.User)
+		require.Equal(t, test.Env.Password, env.Password)
 	}
 }
