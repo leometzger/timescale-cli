@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log/slog"
 	"time"
+
+	"github.com/leometzger/timescale-cli/internal/pacer"
 )
 
 type AggregationsService interface {
@@ -64,26 +66,17 @@ func (s *aggregationsService) Refresh(conf *RefreshConfig) error {
 	}
 
 	if conf.Pace > 0 {
-		pointer := conf.Start
-		paceDuration := time.Duration(24*conf.Pace) * time.Hour
-
-		for pointer.Before(conf.End) {
-			for _, agg := range aggs {
-				var err error
-
-				if pointer.Add(paceDuration).Before(conf.End) {
-					err = s.repo.Refresh(agg.ViewName, pointer, pointer.Add(paceDuration))
-				} else {
-					err = s.repo.Refresh(agg.ViewName, pointer, conf.End)
+		pacer.ExecuteWithPace(
+			conf.Start,
+			conf.End,
+			time.Duration(time.Duration(24*conf.Pace)*time.Hour),
+			func(start, end time.Time) error {
+				for _, agg := range aggs {
+					err = s.repo.Refresh(agg.ViewName, start, end)
 				}
-
-				if err != nil {
-					return err
-				}
-			}
-
-			pointer = pointer.Add(paceDuration)
-		}
+				return err
+			},
+		)
 	} else {
 		for _, agg := range aggs {
 			err := s.repo.Refresh(agg.ViewName, conf.Start, conf.End)
