@@ -66,7 +66,7 @@ func (s *aggregationsService) Refresh(conf *RefreshConfig) error {
 	}
 
 	if conf.Pace > 0 {
-		pacer.ExecuteWithPace(
+		err = pacer.ExecuteWithPace(
 			conf.Start,
 			conf.End,
 			time.Duration(time.Duration(24*conf.Pace)*time.Hour),
@@ -77,6 +77,9 @@ func (s *aggregationsService) Refresh(conf *RefreshConfig) error {
 				return err
 			},
 		)
+		if err != nil {
+			return err
+		}
 	} else {
 		for _, agg := range aggs {
 			err := s.repo.Refresh(agg.ViewName, conf.Start, conf.End)
