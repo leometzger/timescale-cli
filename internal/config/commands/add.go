@@ -17,7 +17,7 @@ func newAddConfigCommand(container *container.CliContainer) *cobra.Command {
 		Args:    cobra.ExactArgs(1),
 		Short:   "Add a new config for access an instance of timescale",
 		Long:    "Add a new config for access an instance of timescale",
-		Example: "tsctl config add dev --host localhost --port 5432 --database timescale --user postgres --password postgres",
+		Example: "timescale config add dev --host localhost --port 5432 --database timescale --user postgres --password postgres",
 		Run: func(cmd *cobra.Command, args []string) {
 			logger := slog.Default()
 

@@ -17,7 +17,7 @@ func newListConfigsCommand(container *container.CliContainer) *cobra.Command {
 		Aliases: []string{"ls"},
 		Short:   "List all available timescale connection configs",
 		Long:    "List all available timescaleDB connection configs",
-		Example: "tsctl config ls",
+		Example: "timescale config ls",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger := slog.Default()
 

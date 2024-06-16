@@ -16,7 +16,7 @@ func newCompressCommand(container *container.CliContainer) *cobra.Command {
 		Short:   "Compresses continuous aggregations that match the filter",
 		Long:    "Compresses continuous aggregations that match the filter",
 		Args:    cobra.ExactArgs(0),
-		Example: `tsctl aggregation compress --view %daily --hypertable metrics`,
+		Example: `timescale aggregation compress --view %daily --hypertable metrics`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			container.Connect()
 

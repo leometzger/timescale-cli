@@ -1,3 +1,3 @@
 FROM scratch
-COPY tsctl /
+COPY timescale /
 ENTRYPOINT ["/tsctl"]
